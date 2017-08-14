@@ -7,16 +7,8 @@ module RuboCop
           def on_send(node)
             method_name = node.loc.selector.source
             return if !/raise|fail/.match(method_name)
-            if method_name == "raise"
-              receiver_node, method_name, *arg_nodes = *node
-              if !arg_nodes.empty? && arg_nodes[0].type == :const && arg_nodes[1]
-                node = arg_nodes[1]
-              else
-                node = arg_nodes[0]
-              end
-              how_bad_is_it(node, method_name, node)
-            elsif method_name == "fail"
-              receiver_node, method_name, *arg_nodes = *node
+            if method_name == "raise" || method_name == "fail"
+              _, method_name, *arg_nodes = *node
               if !arg_nodes.empty? && arg_nodes[0].type == :const && arg_nodes[1]
                 node = arg_nodes[1]
               else
