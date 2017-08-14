@@ -4,31 +4,68 @@ require 'spec_helper'
 describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
   let(:config) { RuboCop::Config.new }
   subject(:cop) { described_class.new(config) }
+  before(:each) {
+    investigate(cop, source)
+  }
 
   it_behaves_like 'accepts', 'fail _("a string")'
   it_behaves_like 'accepts', 'raise _("a string")'
+  it_behaves_like 'accepts', "fail _('a string')"
+  it_behaves_like 'accepts', "raise _('a string')"
 
-  context 'undecorated fail string' do
+  context 'undecorated fail double-quoted string' do
     let(:source) { 'fail "a string"' }
 
-    it 'rejects' do
-      investigate(cop, source)
-      expect(cop.offenses.size).to eq(1)
+    it 'has the correct message' do
+      expect(cop.offenses[0]).not_to be_nil
       expect(cop.offenses[0].message).to match(/should have a decorator around the message/)
+    end
+
+    it 'has the correct offenses' do
+      expect(cop.offenses.size).to eq(1)
     end
   end
 
-  context 'undecorated raise string' do
+  context 'undecorated fail single-quoted string' do
+    let(:source) { "fail 'a string'" }
+
+    it 'has the correct message' do
+      expect(cop.offenses[0]).not_to be_nil
+      expect(cop.offenses[0].message).to match(/should have a decorator around the message/)
+    end
+
+    it 'has the correct offenses' do
+      expect(cop.offenses.size).to eq(1)
+    end
+  end
+
+  context 'undecorated raise double-quoted string' do
     let(:source) { 'raise "a string"' }
 
-    it 'rejects', broken: true do
-      investigate(cop, source)
-      expect(cop.offenses.size).to eq(1)
+    it 'rejects' do
+      expect(cop.offenses[0]).not_to be_nil
       expect(cop.offenses[0].message).to match(/should have a decorator around the message/)
+    end
+
+    it 'has the correct offenses' do
+      expect(cop.offenses.size).to eq(1)
     end
   end
 
-  context 'multiline fail string' do
+  context 'undecorated raise single-quoted string' do
+    let(:source) { "raise 'a string'" }
+
+    it 'rejects' do
+      expect(cop.offenses[0]).not_to be_nil
+      expect(cop.offenses[0].message).to match(/should have a decorator around the message/)
+    end
+
+    it 'has the correct offenses' do
+      expect(cop.offenses.size).to eq(1)
+    end
+  end
+
+  context 'multiline fail string', broken: true do
     let(:source) { <<-RUBY
 fail <<-STR
   this
@@ -36,17 +73,20 @@ fail <<-STR
   a
   string
 STR
-    RUBY
+RUBY
     }
 
-    it 'rejects', broken: true do
-      investigate(cop, source)
-      expect(cop.offenses.size).to eq(1)
+    it 'rejects' do
+      expect(cop.offenses[0]).not_to be_nil
       expect(cop.offenses[0].message).to match(/should not use a multi-line string/)
+    end
+
+    it 'has the correct offenses' do
+      expect(cop.offenses.size).to eq(1)
     end
   end
 
-  context 'multiline raise string' do
+  context 'multiline raise string', broken: true do
     let(:source) { <<-RUBY
 raise <<-STR
   this
@@ -54,13 +94,16 @@ raise <<-STR
   a
   string
 STR
-    RUBY
+RUBY
     }
 
-    it 'rejects', broken: true do
-      investigate(cop, source)
-      expect(cop.offenses.size).to eq(1)
+    it 'rejects' do
+      expect(cop.offenses[0]).not_to be_nil
       expect(cop.offenses[0].message).to match(/should not use a multi-line string/)
+    end
+
+    it 'has the correct offenses' do
+      expect(cop.offenses.size).to eq(1)
     end
   end
 
@@ -71,9 +114,12 @@ fail "this" + "string" + "is" + "concatenated"
     }
 
     it 'rejects' do
-      investigate(cop, source)
-      expect(cop.offenses.size).to eq(1)
+      expect(cop.offenses[0]).not_to be_nil
       expect(cop.offenses[0].message).to match(/should not use a concatenated string/)
+    end
+
+    it 'has the correct offenses' do
+      expect(cop.offenses.size).to eq(1)
     end
   end
 
@@ -83,10 +129,13 @@ raise "this" + "string" + "is" + "concatenated"
     RUBY
     }
 
-    it 'rejects', broken: true do
-      investigate(cop, source)
-      expect(cop.offenses.size).to eq(1)
+    it 'rejects' do
+      expect(cop.offenses[0]).not_to be_nil
       expect(cop.offenses[0].message).to match(/should not use a concatenated string/)
+    end
+
+    it 'has the correct offenses' do
+      expect(cop.offenses.size).to eq(1)
     end
   end
 
@@ -98,13 +147,16 @@ fail "this string has a \#{var}"
     }
 
     it 'rejects' do
-      investigate(cop, source)
-      expect(cop.offenses.size).to eq(1)
+      expect(cop.offenses[0]).not_to be_nil
       expect(cop.offenses[0].message).to match(/interpolation is a sin/)
+    end
+
+    it 'has the correct offenses' do
+      expect(cop.offenses.size).to eq(1)
     end
   end
 
-  context 'interpolated raise string', broken: true do
+  context 'interpolated raise string' do
     let(:source) { <<-RUBY
 var = "foo"
 raise "this string has a \#{var}"
@@ -112,9 +164,12 @@ raise "this string has a \#{var}"
     }
 
     it 'rejects' do
-      investigate(cop, source)
-      expect(cop.offenses.size).to eq(1)
+      expect(cop.offenses[0]).not_to be_nil
       expect(cop.offenses[0].message).to match(/interpolation is a sin/)
+    end
+
+    it 'has the correct offenses' do
+      expect(cop.offenses.size).to eq(1)
     end
   end
 
