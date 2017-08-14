@@ -10,11 +10,11 @@ module RuboCop
             if method_name == "raise" || method_name == "fail"
               _, method_name, *arg_nodes = *node
               if !arg_nodes.empty? && arg_nodes[0].type == :const && arg_nodes[1]
-                node = arg_nodes[1]
+                arg_node = arg_nodes[1]
               else
-                node = arg_nodes[0]
+                arg_node = arg_nodes[0]
               end
-              how_bad_is_it(node, method_name, node)
+              how_bad_is_it(node, method_name, arg_node)
             end
           end
 
