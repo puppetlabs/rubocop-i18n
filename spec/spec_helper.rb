@@ -2,6 +2,7 @@ require "bundler/setup"
 require "shared_functions"
 require "shared_examples"
 require 'rubocop/cop/i18n'
+require 'rubocop/rspec/cop_helper'
 
 RSpec.configure do |config|
 
