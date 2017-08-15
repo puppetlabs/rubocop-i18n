@@ -67,7 +67,7 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
     end
   end
 
-  context 'multiline fail string' do
+  context 'multiline fail string', broken: true do
     let(:source) { <<-RUBY
 fail 'this '\
   'is '\
@@ -86,7 +86,7 @@ RUBY
     end
   end
 
-  context 'multiline raise string' do
+  context 'multiline raise string', broken: true do
     let(:source) { <<-RUBY
 raise 'this '\
   'is '\
@@ -104,6 +104,49 @@ RUBY
       expect(cop.offenses.size).to eq(1)
     end
   end
+
+  context 'heredoc fail string', broken: true do
+    let(:source) { <<-RUBY
+fail <<-ERROR
+this
+is
+a
+string
+ERROR
+RUBY
+    }
+
+    it 'rejects' do
+      expect(cop.offenses[0]).not_to be_nil
+      expect(cop.offenses[0].message).to match(/should not use a multi-line string/)
+    end
+
+    it 'has the correct offenses' do
+      expect(cop.offenses.size).to eq(1)
+    end
+  end
+
+  context 'heredoc raise string', broken: true do
+    let(:source) { <<-RUBY
+raise <<-ERROR
+this
+is
+a
+string
+ERROR
+RUBY
+    }
+
+    it 'rejects' do
+      expect(cop.offenses[0]).not_to be_nil
+      expect(cop.offenses[0].message).to match(/should not use a multi-line string/)
+    end
+
+    it 'has the correct offenses' do
+      expect(cop.offenses.size).to eq(1)
+    end
+  end
+
 
   context 'concatenated fail string' do
     let(:source) { <<-RUBY
