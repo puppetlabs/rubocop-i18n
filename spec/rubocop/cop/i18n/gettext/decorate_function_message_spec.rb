@@ -12,6 +12,8 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
   it_behaves_like 'accepts', 'raise _("a string")'
   it_behaves_like 'accepts', "fail _('a string')"
   it_behaves_like 'accepts', "raise _('a string')"
+  it_behaves_like 'accepts', "fail FunctionCall()"
+  it_behaves_like 'accepts', "raise FunctionCall()"
 
   context 'undecorated fail double-quoted string' do
     let(:source) { 'fail "a string"' }
@@ -65,14 +67,12 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
     end
   end
 
-  context 'multiline fail string', broken: true do
+  context 'multiline fail string' do
     let(:source) { <<-RUBY
-fail <<-STR
-  this
-  is
-  a
-  string
-STR
+fail 'this '\
+  'is '\
+  'a '\
+  'string'
 RUBY
     }
 
@@ -86,14 +86,12 @@ RUBY
     end
   end
 
-  context 'multiline raise string', broken: true do
+  context 'multiline raise string' do
     let(:source) { <<-RUBY
-raise <<-STR
-  this
-  is
-  a
-  string
-STR
+raise 'this '\
+  'is '\
+  'a '\
+  'string'\
 RUBY
     }
 
