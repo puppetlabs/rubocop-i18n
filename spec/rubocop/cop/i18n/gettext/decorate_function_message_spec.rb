@@ -12,6 +12,8 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
   it_behaves_like 'accepts', 'raise _("a string")'
   it_behaves_like 'accepts', "fail _('a string')"
   it_behaves_like 'accepts', "raise _('a string')"
+  it_behaves_like 'accepts', "fail FunctionCall()"
+  it_behaves_like 'accepts', "raise FunctionCall()"
 
   context 'undecorated fail double-quoted string' do
     let(:source) { 'fail "a string"' }
@@ -72,12 +74,10 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
 
   context 'multiline fail string', broken: true do
     let(:source) { <<-RUBY
-fail <<-STR
-  this
-  is
-  a
-  string
-STR
+fail 'this '\
+  'is '\
+  'a '\
+  'string'
 RUBY
     }
 
@@ -93,12 +93,10 @@ RUBY
 
   context 'multiline raise string', broken: true do
     let(:source) { <<-RUBY
-raise <<-STR
-  this
-  is
-  a
-  string
-STR
+raise 'this '\
+  'is '\
+  'a '\
+  'string'\
 RUBY
     }
 
@@ -111,6 +109,49 @@ RUBY
       expect(cop.offenses.size).to eq(1)
     end
   end
+
+  context 'heredoc fail string', broken: true do
+    let(:source) { <<-RUBY
+fail <<-ERROR
+this
+is
+a
+string
+ERROR
+RUBY
+    }
+
+    it 'rejects' do
+      expect(cop.offenses[0]).not_to be_nil
+      expect(cop.offenses[0].message).to match(/should not use a multi-line string/)
+    end
+
+    it 'has the correct offenses' do
+      expect(cop.offenses.size).to eq(1)
+    end
+  end
+
+  context 'heredoc raise string', broken: true do
+    let(:source) { <<-RUBY
+raise <<-ERROR
+this
+is
+a
+string
+ERROR
+RUBY
+    }
+
+    it 'rejects' do
+      expect(cop.offenses[0]).not_to be_nil
+      expect(cop.offenses[0].message).to match(/should not use a multi-line string/)
+    end
+
+    it 'has the correct offenses' do
+      expect(cop.offenses.size).to eq(1)
+    end
+  end
+
 
   context 'concatenated fail string' do
     let(:source) { <<-RUBY

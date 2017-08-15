@@ -7,18 +7,33 @@ module RuboCop
           def on_send(node)
             method_name = node.loc.selector.source
             return if !/raise|fail/.match(method_name)
-            if method_name == "raise" || method_name == "fail"
+            if supported_method_name?(method_name)
               _, method_name, *arg_nodes = *node
-              if !arg_nodes.empty? && arg_nodes[0].type == :const && arg_nodes[1]
-                arg_node = arg_nodes[1]
-              else
-                arg_node = arg_nodes[0]
+              if !arg_nodes.empty? && contains_string?(arg_nodes)
+                if string_constant?(arg_nodes)
+                  arg_node = arg_nodes[1]
+                else
+                  arg_node = arg_nodes[0]
+                end
+
+                how_bad_is_it(node, method_name, arg_node)
               end
-              how_bad_is_it(node, method_name, arg_node)
             end
           end
 
           private
+
+          def supported_method_name?(method_name)
+            ["raise", "fail"].include?(method_name)
+          end
+
+          def string_constant?(nodes)
+            nodes[0].type == :const && nodes[1]
+          end
+
+          def contains_string?(nodes)
+            nodes[0].inspect.include?(":str") || nodes[0].inspect.include?(":dstr")
+          end
 
           def how_bad_is_it(node, method_name, message)
             if message.str_type?
