@@ -8,256 +8,127 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
     investigate(cop, source)
   }
 
-  it_behaves_like 'accepts', 'fail _("a string")'
-  it_behaves_like 'accepts', 'raise _("a string")'
-  it_behaves_like 'accepts', "fail _('a string')"
-  it_behaves_like 'accepts', "raise _('a string')"
-  it_behaves_like 'accepts', "fail FunctionCall()"
-  it_behaves_like 'accepts', "raise FunctionCall()"
+  functions = ['fail', 'raise']
+  functions.each do |function|
+    context "#{function} undecorated double-quote message" do
+      let(:source) { "#{function} \"a string\"" }
 
-  context 'undecorated fail double-quoted string' do
-    let(:source) { 'fail "a string"' }
+      it 'has the correct message' do
+        expect(cop.offenses[0]).not_to be_nil
+        expect(cop.offenses[0].message).to match(/should have a decorator around the message/)
+      end
 
-    it 'has the correct message' do
-      expect(cop.offenses[0]).not_to be_nil
-      expect(cop.offenses[0].message).to match(/should have a decorator around the message/)
+      it 'has the correct offenses' do
+        expect(cop.offenses.size).to eq(1)
+      end
+
+      it 'autocorrects' do
+        corrected = autocorrect_source("#{function}(\"a string\")")
+        expect(corrected).to eq("#{function}(_(\"a string\"))")
+      end
     end
 
-    it 'has the correct offenses' do
-      expect(cop.offenses.size).to eq(1)
+    context "#{function} undecorated single-quoted message" do
+      let(:source) { "#{function} 'a string'" }
+
+      it 'has the correct message' do
+        expect(cop.offenses[0]).not_to be_nil
+        expect(cop.offenses[0].message).to match(/should have a decorator around the message/)
+      end
+
+      it 'has the correct offenses' do
+        expect(cop.offenses.size).to eq(1)
+      end
+
+      it 'autocorrects' do
+        corrected = autocorrect_source("#{function}('a string')")
+        expect(corrected).to eq("#{function}(_('a string'))")
+      end
     end
 
-    it 'autocorrects' do 
-      corrected = autocorrect_source('fail("a string")')
-      expect(corrected).to eq("fail(_(\"a string\"))")
-    end 
-  end
+    context "#{function} undecorated constant & message" do
+      let(:source) { "#{function} CONSTANT, 'a string'" }
 
-  context 'undecorated fail single-quoted string' do
-    let(:source) { "fail 'a string'" }
+      it 'has the correct message' do
+        expect(cop.offenses[0]).not_to be_nil
+        expect(cop.offenses[0].message).to match(/should have a decorator around the message/)
+      end
 
-    it 'has the correct message' do
-      expect(cop.offenses[0]).not_to be_nil
-      expect(cop.offenses[0].message).to match(/should have a decorator around the message/)
+      it 'has the correct offenses' do
+        expect(cop.offenses.size).to eq(1)
+      end
+
+      it 'autocorrects' do
+        corrected = autocorrect_source("#{function}(CONSTANT, 'a string')")
+        expect(corrected).to eq("#{function}(CONSTANT, _('a string'))")
+      end
     end
 
-    it 'has the correct offenses' do
-      expect(cop.offenses.size).to eq(1)
+    context "#{function} multiline message", broken: true do
+      let(:source) { "#{function} 'multi '\\ 'line'"}
+      it 'rejects' do
+        expect(cop.offenses[0]).not_to be_nil
+        expect(cop.offenses[0].message).to match(/should not use a multi-line string/)
+      end
+
+      it 'has the correct offenses' do
+        expect(cop.offenses.size).to eq(1)
+      end
     end
 
-    it 'autocorrects' do
-      corrected = autocorrect_source("fail('a string')")
-      expect(corrected).to eq("fail(_('a string'))")
-    end
-  end
-
-  context 'undecorated raise double-quoted string' do
-    let(:source) { 'raise "a string"' }
-
-    it 'rejects' do
-      expect(cop.offenses[0]).not_to be_nil
-      expect(cop.offenses[0].message).to match(/should have a decorator around the message/)
-    end
-
-    it 'has the correct offenses' do
-      expect(cop.offenses.size).to eq(1)
-    end
-
-    it 'autocorrects' do
-      corrected = autocorrect_source('raise("a string")')
-      expect(corrected).to eq("raise(_(\"a string\"))")
-    end
-  end
-
-  context 'undecorated raise constant & double-quoted string' do
-    let(:source) { 'raise CONSTANT, "a string"' }
-
-    it 'rejects' do
-      expect(cop.offenses[0]).not_to be_nil
-      expect(cop.offenses[0].message).to match(/should have a decorator around the message/)
-    end
-
-    it 'has the correct offenses' do
-      expect(cop.offenses.size).to eq(1)
-    end
-
-    it 'autocorrects' do
-      corrected = autocorrect_source('raise(CONSTANT, "a string")')
-      expect(corrected).to eq("raise(CONSTANT, _(\"a string\"))")
-    end
-  end
-
-  context 'undecorated raise single-quoted string' do
-    let(:source) { "raise 'a string'" }
-
-    it 'rejects' do
-      expect(cop.offenses[0]).not_to be_nil
-      expect(cop.offenses[0].message).to match(/should have a decorator around the message/)
-    end
-
-    it 'has the correct offenses' do
-      expect(cop.offenses.size).to eq(1)
-    end
-
-    it 'autocorrects' do
-      corrected = autocorrect_source("raise('a string')")
-      expect(corrected).to eq("raise(_('a string'))")
-    end
-  end
-
-  context 'multiline fail string', broken: true do
-    let(:source) { <<-RUBY
-fail 'this '\
-  'is '\
-  'a '\
-  'string'
-RUBY
-    }
-
-    it 'rejects' do
-      expect(cop.offenses[0]).not_to be_nil
-      expect(cop.offenses[0].message).to match(/should not use a multi-line string/)
-    end
-
-    it 'has the correct offenses' do
-      expect(cop.offenses.size).to eq(1)
-    end
-  end
-
-  context 'multiline raise string', broken: true do
-    let(:source) { <<-RUBY
-raise 'this '\
-  'is '\
-  'a '\
-  'string'\
-RUBY
-    }
-
-    it 'rejects' do
-      expect(cop.offenses[0]).not_to be_nil
-      expect(cop.offenses[0].message).to match(/should not use a multi-line string/)
-    end
-
-    it 'has the correct offenses' do
-      expect(cop.offenses.size).to eq(1)
-    end
-  end
-
-  context 'heredoc fail string', broken: true do
-    let(:source) { <<-RUBY
-fail <<-ERROR
+    context "#{function} heredoc message", broken: true do
+      let(:source) { <<-RUBY
+#{function} <<-ERROR
 this
 is
 a
 string
 ERROR
 RUBY
-    }
+      }
 
-    it 'rejects' do
-      expect(cop.offenses[0]).not_to be_nil
-      expect(cop.offenses[0].message).to match(/should not use a multi-line string/)
+      it 'rejects' do
+        expect(cop.offenses[0]).not_to be_nil
+        expect(cop.offenses[0].message).to match(/should not use a multi-line string/)
+      end
+
+      it 'has the correct offenses' do
+        expect(cop.offenses.size).to eq(1)
+      end
     end
 
-    it 'has the correct offenses' do
-      expect(cop.offenses.size).to eq(1)
-    end
-  end
+    context "#{function} concatenated message" do
+      let(:source) { "fail 'this' + 'string' + 'is' + 'concatenated'"}
 
-  context 'heredoc raise string', broken: true do
-    let(:source) { <<-RUBY
-raise <<-ERROR
-this
-is
-a
-string
-ERROR
-RUBY
-    }
+      it 'rejects' do
+        expect(cop.offenses[0]).not_to be_nil
+        expect(cop.offenses[0].message).to match(/should not use a concatenated string/)
+      end
 
-    it 'rejects' do
-      expect(cop.offenses[0]).not_to be_nil
-      expect(cop.offenses[0].message).to match(/should not use a multi-line string/)
+      it 'has the correct offenses' do
+        expect(cop.offenses.size).to eq(1)
+      end
     end
 
-    it 'has the correct offenses' do
-      expect(cop.offenses.size).to eq(1)
-    end
-  end
+    context "#{function} interpolated string" do
+      let(:source) { "#{function} \"this string has a \#{var}\""}
 
+      it 'rejects' do
+        expect(cop.offenses[0]).not_to be_nil
+        expect(cop.offenses[0].message).to match(/interpolation is a sin/)
+      end
 
-  context 'concatenated fail string' do
-    let(:source) { <<-RUBY
-fail "this" + "string" + "is" + "concatenated"
-    RUBY
-    }
+      it 'has the correct offenses' do
+        expect(cop.offenses.size).to eq(1)
+      end
 
-    it 'rejects' do
-      expect(cop.offenses[0]).not_to be_nil
-      expect(cop.offenses[0].message).to match(/should not use a concatenated string/)
-    end
+      it 'autocorrects' do
+        corrected = autocorrect_source("#{function}(\"a string \#{var}\")")
+        expect(corrected).to eq("#{function}(_(\"a string %{value0}\") % { value0: var, })")
 
-    it 'has the correct offenses' do
-      expect(cop.offenses.size).to eq(1)
+  #      corrected = autocorrect_source('raise(Puppet::ParseError, "mysql_password(): Wrong number of arguments given (#{args.size} for 1)")')
+  #      expect(corrected).to eq('raise(Puppet::ParseError, _("mysql_password(): Wrong number of arguments given (%{value0} for 1)") % { value0: args.size, })')
+      end
     end
   end
-
-  context 'concatenated raise string' do
-    let(:source) { <<-RUBY
-raise "this" + "string" + "is" + "concatenated"
-    RUBY
-    }
-
-    it 'rejects' do
-      expect(cop.offenses[0]).not_to be_nil
-      expect(cop.offenses[0].message).to match(/should not use a concatenated string/)
-    end
-
-    it 'has the correct offenses' do
-      expect(cop.offenses.size).to eq(1)
-    end
-  end
-
-  context 'interpolated fail string' do
-    let(:source) { <<-RUBY
-var = "foo"
-fail "this string has a \#{var}"
-    RUBY
-    }
-
-    it 'rejects' do
-      expect(cop.offenses[0]).not_to be_nil
-      expect(cop.offenses[0].message).to match(/interpolation is a sin/)
-    end
-
-    it 'has the correct offenses' do
-      expect(cop.offenses.size).to eq(1)
-    end
-  end
-
-  context 'interpolated raise string' do
-    let(:source) { <<-RUBY
-var = "foo"
-raise "this string has a \#{var}"
-    RUBY
-    }
-
-    it 'rejects' do
-      expect(cop.offenses[0]).not_to be_nil
-      expect(cop.offenses[0].message).to match(/interpolation is a sin/)
-    end
-
-    it 'has the correct offenses' do
-      expect(cop.offenses.size).to eq(1)
-    end
-
-    it 'autocorrects' do 
-      corrected = autocorrect_source('fail("a string #{var}")')
-      expect(corrected).to eq("fail(_(\"a string %{value0}\") % { value0: var, })")
-
-#      corrected = autocorrect_source('raise(Puppet::ParseError, "mysql_password(): Wrong number of arguments given (#{args.size} for 1)")')
-#      expect(corrected).to eq('raise(Puppet::ParseError, _("mysql_password(): Wrong number of arguments given (%{value0} for 1)") % { value0: args.size, })')
-    end 
-  end
-
 end
