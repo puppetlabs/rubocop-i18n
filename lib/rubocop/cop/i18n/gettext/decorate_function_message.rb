@@ -9,7 +9,7 @@ module RuboCop
             return if !/raise|fail/.match(method_name)
             if supported_method_name?(method_name)
               _, method_name, *arg_nodes = *node
-              if !arg_nodes.empty? && contains_string?(arg_nodes)
+              if !arg_nodes.empty? && (contains_string?(arg_nodes) || string_constant?(arg_nodes))
                 if string_constant?(arg_nodes)
                   arg_node = arg_nodes[1]
                 else
