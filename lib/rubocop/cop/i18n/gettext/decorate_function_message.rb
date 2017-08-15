@@ -90,8 +90,12 @@ module RuboCop
           def autocorrect(node)
             if node.str_type?
               single_string_correct(node)
-            else
-              multiline_string_correct(node)
+            elsif multiline_offense?(node)
+            # stuff
+            elsif concatination_offense?(node)
+            # stuff
+            elsif interpolation_offense?(node)
+              interpolation_correct(node)
             end
           end
 
@@ -102,6 +106,43 @@ module RuboCop
 
           def multiline_string_correct(node)
           end
+
+          def interpolation_correct(node)
+            interpolated_values_string = ""
+            count = 0
+            ->(corrector) { 
+              node.children.each do |child|
+                # dstrs are split into "str" segments and other segments.
+                # The "other" segments are the interpolated values.
+                if child.type == :begin
+                  value = child.children[0]
+                  hash_key = "value"
+                  if value.type == :lvar
+                    # Use the variable's name as the format key
+                    hash_key = value.loc.name.source
+                  else
+                    # These are placeholders that will manually need to be given
+                    # a descriptive name
+                    hash_key << "#{count}"
+                    count += 1
+                  end
+                  if interpolated_values_string.empty?
+                    interpolated_values_string << "{ "
+                  end
+                  interpolated_values_string << "#{hash_key}: #{value.loc.expression.source}, "
+
+                  # Replace interpolation with format string
+                  corrector.replace(child.loc.expression, "%{#{hash_key}}")
+                end
+              end
+              if !interpolated_values_string.empty?
+                interpolated_values_string << "}"
+              end
+              corrector.insert_before(node.source_range, '_(') 
+              corrector.insert_after(node.source_range, ") % #{interpolated_values_string}") 
+            } 
+          end
+
         end
       end
     end

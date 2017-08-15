@@ -218,9 +218,9 @@ raise "this string has a \#{var}"
       expect(cop.offenses.size).to eq(1)
     end
 
-    it 'autocorrects', broken: true do 
+    it 'autocorrects' do 
       corrected = autocorrect_source('fail("a string #{var}")')
-      expect(corrected).to eq("fail(_(\"a string %{var}\") % {var: var})")
+      expect(corrected).to eq("fail(_(\"a string %{value0}\") % { value0: var, })")
     end 
   end
 
