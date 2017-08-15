@@ -1,0 +1,7 @@
+language: ruby
+matrix:
+  fast_finish: true
+  include:
+    - rvm: 2.4.1
+notifications:
+  email: false
