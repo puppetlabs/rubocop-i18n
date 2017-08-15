@@ -24,6 +24,11 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
     it 'has the correct offenses' do
       expect(cop.offenses.size).to eq(1)
     end
+
+    it 'autocorrects' do 
+      corrected = autocorrect_source('fail("a string")')
+      expect(corrected).to eq("fail(_(\"a string\"))")
+    end 
   end
 
   context 'undecorated fail single-quoted string' do
@@ -171,6 +176,11 @@ raise "this string has a \#{var}"
     it 'has the correct offenses' do
       expect(cop.offenses.size).to eq(1)
     end
+
+    it 'autocorrects', broken: true do 
+      corrected = autocorrect_source('fail("a string #{var}")')
+      expect(corrected).to eq("fail(_(\"a string %{var}\") % {var: var})")
+    end 
   end
 
 end
