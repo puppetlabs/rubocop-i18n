@@ -44,6 +44,11 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
     it 'has the correct offenses' do
       expect(cop.offenses.size).to eq(1)
     end
+
+    it 'autocorrects' do
+      corrected = autocorrect_source("fail('a string')")
+      expect(corrected).to eq("fail(_('a string'))")
+    end
   end
 
   context 'undecorated raise double-quoted string' do
@@ -57,6 +62,29 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
     it 'has the correct offenses' do
       expect(cop.offenses.size).to eq(1)
     end
+
+    it 'autocorrects' do
+      corrected = autocorrect_source('raise("a string")')
+      expect(corrected).to eq("raise(_(\"a string\"))")
+    end
+  end
+
+  context 'undecorated raise constant & double-quoted string' do
+    let(:source) { 'raise CONSTANT, "a string"' }
+
+    it 'rejects' do
+      expect(cop.offenses[0]).not_to be_nil
+      expect(cop.offenses[0].message).to match(/should have a decorator around the message/)
+    end
+
+    it 'has the correct offenses' do
+      expect(cop.offenses.size).to eq(1)
+    end
+
+    it 'autocorrects' do
+      corrected = autocorrect_source('raise(CONSTANT, "a string")')
+      expect(corrected).to eq("raise(CONSTANT, _(\"a string\"))")
+    end
   end
 
   context 'undecorated raise single-quoted string' do
@@ -69,6 +97,11 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
 
     it 'has the correct offenses' do
       expect(cop.offenses.size).to eq(1)
+    end
+
+    it 'autocorrects' do
+      corrected = autocorrect_source("raise('a string')")
+      expect(corrected).to eq("raise(_('a string'))")
     end
   end
 
@@ -221,6 +254,9 @@ raise "this string has a \#{var}"
     it 'autocorrects' do 
       corrected = autocorrect_source('fail("a string #{var}")')
       expect(corrected).to eq("fail(_(\"a string %{value0}\") % { value0: var, })")
+
+#      corrected = autocorrect_source('raise(Puppet::ParseError, "mysql_password(): Wrong number of arguments given (#{args.size} for 1)")')
+#      expect(corrected).to eq('raise(Puppet::ParseError, _("mysql_password(): Wrong number of arguments given (%{value0} for 1)") % { value0: args.size, })')
     end 
   end
 
