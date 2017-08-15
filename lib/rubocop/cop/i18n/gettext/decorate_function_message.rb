@@ -7,7 +7,7 @@ module RuboCop
           def on_send(node)
             method_name = node.loc.selector.source
             return if !/raise|fail/.match(method_name)
-            if ["raise", "fail"].include?(method_name)
+            if supported_method_name?(method_name)
               _, method_name, *arg_nodes = *node
               if !arg_nodes.empty? && contains_string?(arg_nodes)
                 if string_constant?(arg_nodes)
@@ -22,6 +22,10 @@ module RuboCop
           end
 
           private
+
+          def supported_method_name?(method_name)
+            ["raise", "fail"].include?(method_name)
+          end
 
           def string_constant?(nodes)
             nodes[0].type == :const && nodes[1]
