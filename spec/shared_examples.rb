@@ -19,6 +19,13 @@ shared_examples 'a_detecting_cop' do |unfixed, function, expected_warning|
   end
 end
 
+shared_examples 'a_no_cop_required' do |fixed, function|
+  let(:source) { "#{fixed}" }
+  it 'has no offenses found' do
+    expect(cop.offenses).to be_empty 
+  end
+end
+
 shared_examples 'a_fixing_cop' do |unfixed, fixed, function|
   let(:source) { "#{unfixed}" }
   it 'autocorrects' do

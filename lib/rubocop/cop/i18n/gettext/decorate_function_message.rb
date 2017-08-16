@@ -28,7 +28,14 @@ module RuboCop
           end
 
           def already_decorated?(nodes)
-            nodes[0] == :_ || nodes[1] == :_
+            decorated = false
+            if nodes[0].class == RuboCop::AST::SendNode
+              decorated = true if nodes[0].loc.selector.source == "_"
+            end
+            if nodes[1].class == RuboCop::AST::SendNode
+              decorated = true if nodes[1].loc.selector.source == "_"
+            end
+            decorated
           end
 
           def string_constant?(nodes)

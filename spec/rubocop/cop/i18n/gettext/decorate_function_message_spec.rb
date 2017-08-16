@@ -13,14 +13,17 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
      context "#{function} with undecorated double-quote message" do
        it_behaves_like 'a_detecting_cop', "#{function}(\"a string\")", function, 'should have a decorator around the message'
        it_behaves_like 'a_fixing_cop', "#{function}(\"a string\")", "#{function}(_(\"a string\"))", function
+       it_behaves_like 'a_no_cop_required', "#{function}(_(\"a string\"))", function
      end
      context "#{function} with undecorated single-quoted message" do
        it_behaves_like 'a_detecting_cop', "#{function}('a string')", function, 'should have a decorator around the message'
        it_behaves_like 'a_fixing_cop', "#{function}('a string')", "#{function}(_('a string'))", function
+       it_behaves_like 'a_no_cop_required', "#{function}(_('a string'))", function
      end
      context "#{function} with undecorated constant & message" do
        it_behaves_like 'a_detecting_cop', "#{function}(CONSTANT, 'a string')", function, 'should have a decorator around the message'
        it_behaves_like 'a_fixing_cop', "#{function}(CONSTANT, 'a string')", "#{function}(CONSTANT, _('a string'))", function
+       it_behaves_like 'a_no_cop_required', "#{function}(CONSTANT, _('a string'))", function
      end
      context "#{function} with multiline message" do
        it_behaves_like 'a_detecting_cop', "#{function} 'multi '\\ 'line'", function, 'should not use a multi-line string'
@@ -40,6 +43,7 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
      context "#{function} with interpolated string" do
        it_behaves_like 'a_detecting_cop', "#{function}(\"a string \#{var}\")", function, 'interpolation is a sin'
 #      it_behaves_like 'a_fixing_cop', "#{function}(\"a string \#{var}\")", "#{function}(_(\"a string %{value0}\")) % { value0: var, }", function
+       it_behaves_like 'a_no_cop_required', "#{function}(_(\"a string %{value0}\")) % { value0: var, }", function
      end
   end
   context "real life examples," do
