@@ -40,7 +40,7 @@ module RuboCop
               add_offense(message, :expression, "'#{method_name}' should have a decorator around the message")
             elsif multiline_offense?(message)
               add_offense(message, :expression, "'#{method_name}' should not use a multi-line string")
-            elsif concatination_offense?(message)
+            elsif concatenation_offense?(message)
               add_offense(message, :expression, "'#{method_name}' should not use a concatenated string")
             elsif interpolation_offense?(message)
               add_offense(message, :expression, "'#{method_name}' interpolation is a sin")
@@ -57,10 +57,11 @@ module RuboCop
                 found_strings = true
               end
             }
-            found_multiline && found_strings
+
+            (found_multiline || found_strings) && (!interpolation_offense?(message)) && (!concatenation_offense?(message))
           end
 
-          def concatination_offense?(message)
+          def concatenation_offense?(message)
             found_concat = false
             found_strings = false
               message.children.each { |child|
@@ -92,7 +93,7 @@ module RuboCop
               single_string_correct(node)
             elsif multiline_offense?(node)
             # stuff
-            elsif concatination_offense?(node)
+            elsif concatenation_offense?(node)
             # stuff
             elsif interpolation_offense?(node)
               interpolation_correct(node)

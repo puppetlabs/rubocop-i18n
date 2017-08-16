@@ -64,7 +64,7 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
       end
     end
 
-    context "#{function} with multiline message", :broken=>true  do
+    context "#{function} with multiline message" do
       let(:source) { "#{function} 'multi '\\ 'line'"}
       it 'has the correct error message' do
         expect(cop.offenses[0]).not_to be_nil
@@ -125,9 +125,27 @@ RUBY
       it 'autocorrects' do
         corrected = autocorrect_source("#{function}(\"a string \#{var}\")")
         expect(corrected).to eq("#{function}(_(\"a string %{value0}\") % { value0: var, })")
+      end
+    end
+  end
 
-  #      corrected = autocorrect_source('raise(Puppet::ParseError, "mysql_password(): Wrong number of arguments given (#{args.size} for 1)")')
-  #      expect(corrected).to eq('raise(Puppet::ParseError, _("mysql_password(): Wrong number of arguments given (%{value0} for 1)") % { value0: args.size, })')
+  context "real life examples," do
+    context "message is multiline with interpolated" do
+      let(:source) { "raise(Puppet::ParseError, \"mysql_password(): Wrong number of arguments \" \\ \"given (\#{args.size} for 1)\")" }
+      #let(:source) { "raise(Puppet::ParseError, \"mysql_password(): Wrong number of arguments \" \\ \"given (\#{args.size} for 1)\"" }
+
+      it 'has the correct error message' do
+        expect(cop.offenses[0]).not_to be_nil
+        expect(cop.offenses[0].message).to match(/interpolation is a sin/)
+      end
+
+      it 'has the correct number of offenses' do
+        expect(cop.offenses.size).to eq(1)
+      end
+
+      it 'autocorrects', broken: true do
+        corrected = autocorrect_source( "raise(Puppet::ParseError, \"mysql_password(): Wrong number of arguments \" \\ \"given (\#{args.size} for 1)\")" ) 
+        expect(corrected).to eq("raise(Puppet::ParseError, _(\"a string %{value0}\") % { value0: var, })")
       end
     end
   end
