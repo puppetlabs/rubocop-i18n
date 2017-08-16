@@ -9,7 +9,7 @@ module RuboCop
             return if !/raise|fail/.match(method_name)
             if supported_method_name?(method_name)
               _, method_name, *arg_nodes = *node
-              if !arg_nodes.empty? && (contains_string?(arg_nodes) || string_constant?(arg_nodes))
+              if !arg_nodes.empty? && !already_decorated?(arg_nodes) && (contains_string?(arg_nodes) || string_constant?(arg_nodes))
                 if string_constant?(arg_nodes)
                   arg_node = arg_nodes[1]
                 else
@@ -25,6 +25,10 @@ module RuboCop
 
           def supported_method_name?(method_name)
             ["raise", "fail"].include?(method_name)
+          end
+
+          def already_decorated?(nodes)
+            nodes[0] == :_ || nodes[1] == :_
           end
 
           def string_constant?(nodes)
@@ -96,7 +100,7 @@ module RuboCop
             elsif concatenation_offense?(node)
             # stuff
             elsif interpolation_offense?(node)
-              interpolation_correct(node)
+            # interpolation_correct(node)
             end
           end
 
