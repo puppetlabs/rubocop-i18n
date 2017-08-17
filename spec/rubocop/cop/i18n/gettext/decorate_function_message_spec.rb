@@ -45,6 +45,12 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
 #      it_behaves_like 'a_fixing_cop', "#{function}(\"a string \#{var}\")", "#{function}(_(\"a string %{value0}\")) % { value0: var, }", function
        it_behaves_like 'a_no_cop_required', "#{function}(_(\"a string %{value0}\")) % { value0: var, }", function
      end
+     context "#{function} with the n_ decorator" do
+       it_behaves_like 'a_no_cop_required', "#{function}(n_(\"a string\"))", function
+       it_behaves_like 'a_no_cop_required', "#{function}(n_('a string'))", function
+       it_behaves_like 'a_no_cop_required', "#{function}(CONSTANT, n_('a string'))", function
+       it_behaves_like 'a_no_cop_required', "#{function}(n_(\"a string %{value0}\")) % { value0: var, }", function
+     end
   end
   context "real life examples," do
     context "message is multiline with interpolated" do

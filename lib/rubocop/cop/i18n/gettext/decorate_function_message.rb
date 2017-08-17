@@ -3,37 +3,36 @@ module RuboCop
     module I18n
       module GetText
         class DecorateFunctionMessage < Cop
+          SUPPORTED_METHODS = ['raise', 'fail']
+          SUPPORTED_DECORATORS = ["_", 'n_']
 
           def on_send(node)
             method_name = node.loc.selector.source
-            return if !/raise|fail/.match(method_name)
-            if supported_method_name?(method_name)
-              _, method_name, *arg_nodes = *node
-              if !arg_nodes.empty? && !already_decorated?(arg_nodes) && (contains_string?(arg_nodes) || string_constant?(arg_nodes))
-                if string_constant?(arg_nodes)
-                  arg_node = arg_nodes[1]
-                else
-                  arg_node = arg_nodes[0]
-                end
-
-                how_bad_is_it(node, method_name, arg_node)
+            return if !supported_method_name?(method_name)
+            _, method_name, *arg_nodes = *node
+            if !arg_nodes.empty? && !already_decorated?(arg_nodes) && (contains_string?(arg_nodes) || string_constant?(arg_nodes))
+              if string_constant?(arg_nodes)
+                arg_node = arg_nodes[1]
+              else
+                arg_node = arg_nodes[0]
               end
+
+              how_bad_is_it(node, method_name, arg_node)
             end
           end
 
           private
 
           def supported_method_name?(method_name)
-            ["raise", "fail"].include?(method_name)
+            SUPPORTED_METHODS.include?(method_name)
           end
 
           def already_decorated?(nodes)
             decorated = false
             if nodes[0].class == RuboCop::AST::SendNode
-              decorated = true if nodes[0].loc.selector.source == "_"
-            end
-            if nodes[1].class == RuboCop::AST::SendNode
-              decorated = true if nodes[1].loc.selector.source == "_"
+              decorated = true if SUPPORTED_DECORATORS.include?(nodes[0].loc.selector.source)
+            elsif nodes[1].class == RuboCop::AST::SendNode
+              decorated = true if SUPPORTED_DECORATORS.include?(nodes[1].loc.selector.source)
             end
             decorated
           end
