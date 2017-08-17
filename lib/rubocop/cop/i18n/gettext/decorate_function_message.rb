@@ -48,27 +48,13 @@ module RuboCop
           def how_bad_is_it(node, method_name, message)
             if message.str_type?
               add_offense(message, :expression, "'#{method_name}' should have a decorator around the message")
-            elsif multiline_offense?(message)
+            elsif message.multiline?
               add_offense(message, :expression, "'#{method_name}' should not use a multi-line string")
             elsif concatenation_offense?(message)
               add_offense(message, :expression, "'#{method_name}' should not use a concatenated string")
             elsif interpolation_offense?(message)
               add_offense(message, :expression, "'#{method_name}' interpolation is a sin")
             end
-          end
-
-          def multiline_offense?(message)
-            found_multiline = false
-            found_strings = false
-            message.children.each { |child|
-              if child == :/
-                found_multiline = true
-              elsif ( (!child.nil? && child.class != Symbol) && ( child.str_type? || child.dstr_type? ) )
-                found_strings = true
-              end
-            }
-
-            (found_multiline || found_strings) && (!interpolation_offense?(message)) && (!concatenation_offense?(message))
           end
 
           def concatenation_offense?(message)

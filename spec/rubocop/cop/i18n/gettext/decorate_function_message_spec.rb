@@ -26,7 +26,7 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
        it_behaves_like 'a_no_cop_required', "#{function}(CONSTANT, _('a string'))", function
      end
      context "#{function} with multiline message" do
-       it_behaves_like 'a_detecting_cop', "#{function} 'multi '\\ 'line'", function, 'should not use a multi-line string'
+       it_behaves_like 'a_detecting_cop', "#{function} 'multi '\\\n 'line'", function, 'should not use a multi-line string'
      end
      context "#{function} with heredoc message" do
      #{function} <<-ERROR
@@ -54,11 +54,11 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
   end
   context "real life examples," do
     context "message is multiline with interpolated" do
-      let(:source) { "raise(Puppet::ParseError, \"mysql_password(): Wrong number of arguments \" \\ \"given (\#{args.size} for 1)\")" }
+      let(:source) { "raise(Puppet::ParseError, \"mysql_password(): Wrong number of arguments \" \\\n \"given (\#{args.size} for 1)\")" }
 
       it 'has the correct error message' do
         expect(cop.offenses[0]).not_to be_nil
-        expect(cop.offenses[0].message).to match(/interpolation is a sin/)
+        expect(cop.offenses[0].message).to match(/should not use a multi-line string/)
       end
 
       it 'has the correct number of offenses' do
