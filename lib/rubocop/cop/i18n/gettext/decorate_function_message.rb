@@ -71,17 +71,17 @@ module RuboCop
           end
 
           def interpolation_offense?(message)
-            found_funct = false
+            found = false
             message.children.each { |child|
               if !child.nil? && child.class != Symbol
                 if child.begin_type? || child.send_type?
-                  found_funct = true
+                  found = true
                 elsif child.dstr_type?
-                  found_funct = true if child.inspect.include?(":send") || child.inspect.include?(":begin")
+                  found = true if child.inspect.include?(":send") || child.inspect.include?(":begin")
                 end
               end
             }
-            found_funct
+            found
           end
 
           def autocorrect(node)
