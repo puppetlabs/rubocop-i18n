@@ -28,15 +28,6 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
      context "#{function} with multiline message" do
        it_behaves_like 'a_detecting_cop', "#{function} 'multi '\\\n 'line'", function, 'should not use a multi-line string'
      end
-     context "#{function} with heredoc message" do
-     #{function} <<-ERROR
-     #this
-     #is
-     #a
-     #string
-     #ERROR
-     #it_behaves_like 'a_detecting_cop', "#{function}(CONSTANT, 'a string')", function, 'heredoc'
-     end
      context "#{function} with concatenated message" do
        it_behaves_like 'a_detecting_cop', "fail 'this' + 'string' + 'is' + 'concatenated'", function, 'should not use a concatenated string'
      end
@@ -44,6 +35,9 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
        it_behaves_like 'a_detecting_cop', "#{function}(\"a string \#{var}\")", function, 'interpolation is a sin'
 #      it_behaves_like 'a_fixing_cop', "#{function}(\"a string \#{var}\")", "#{function}(_(\"a string %{value0}\")) % { value0: var, }", function
        it_behaves_like 'a_no_cop_required', "#{function}(_(\"a string %{value0}\")) % { value0: var, }", function
+     end
+     context "#{function} message not decorated, but does not hit interpolation / concatenation / multi-line / simple-string" do
+       it_behaves_like 'a_detecting_cop', "fail print('kittens')", function, 'There is no decoration'
      end
      context "#{function} with the n_ decorator" do
        it_behaves_like 'a_no_cop_required', "#{function}(n_(\"a string\"))", function

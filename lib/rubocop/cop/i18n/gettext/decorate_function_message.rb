@@ -10,7 +10,7 @@ module RuboCop
             method_name = node.loc.selector.source
             return if !supported_method_name?(method_name)
             _, method_name, *arg_nodes = *node
-            if !arg_nodes.empty? && !already_decorated?(arg_nodes) && (contains_string?(arg_nodes) || string_constant?(arg_nodes))
+            if !arg_nodes.empty? && !already_decorated?(node) && (contains_string?(arg_nodes) || string_constant?(arg_nodes))
               if string_constant?(arg_nodes)
                 arg_node = arg_nodes[1]
               else
@@ -27,14 +27,16 @@ module RuboCop
             SUPPORTED_METHODS.include?(method_name)
           end
 
-          def already_decorated?(nodes)
-            decorated = false
-            if nodes[0].class == RuboCop::AST::SendNode
-              decorated = true if SUPPORTED_DECORATORS.include?(nodes[0].loc.selector.source)
-            elsif nodes[1].class == RuboCop::AST::SendNode
-              decorated = true if SUPPORTED_DECORATORS.include?(nodes[1].loc.selector.source)
+          def already_decorated?(node, parent = nil)
+            parent ||= node
+
+            if node.respond_to?(:loc) && node.loc.respond_to?(:selector)
+              return true if SUPPORTED_DECORATORS.include?(node.loc.selector.source)
             end
-            decorated
+
+            return false unless node.respond_to?(:children)
+
+            node.children.any? { |child| already_decorated?(child, parent) }
           end
 
           def string_constant?(nodes)
@@ -54,6 +56,8 @@ module RuboCop
               add_offense(message, :expression, "'#{method_name}' should not use a concatenated string")
             elsif interpolation_offense?(message)
               add_offense(message, :expression, "'#{method_name}' interpolation is a sin")
+            elsif !already_decorated?(node)
+              add_offense(message, :expression, "'#{method_name}' There is no decoration")
             end
           end
 
