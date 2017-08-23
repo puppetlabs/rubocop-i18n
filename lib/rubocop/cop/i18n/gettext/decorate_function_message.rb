@@ -91,10 +91,6 @@ module RuboCop
           def autocorrect(node)
             if node.str_type?
               single_string_correct(node)
-            elsif multiline_offense?(node)
-            # stuff
-            elsif concatenation_offense?(node)
-            # stuff
             elsif interpolation_offense?(node)
             # interpolation_correct(node)
             end
@@ -103,9 +99,6 @@ module RuboCop
           def single_string_correct(node)
             ->(corrector) { corrector.insert_before(node.source_range , "_(")
             corrector.insert_after(node.source_range , ")") }
-          end
-
-          def multiline_string_correct(node)
           end
 
           def interpolation_correct(node)
