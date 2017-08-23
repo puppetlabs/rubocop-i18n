@@ -35,6 +35,7 @@ GetText/DecorateFunctionMessage:
 ### GetText/DecorateFunctionMessage
 This cop looks for any raise / fail functions and checks the user visible message is using gettext decoration with the _() function.
 This cop will make sure the message is decorated as well as checking that the formatting of the message is compliant according to the follow rules.
+This cop supports autocorrecting of [Simple decoration of a message](#Simple-decoration-of-a-message). See the rubocop documentation on how to run autocorrect.
 
 #### Simple decoration of a message
 All simple message strings for should be decorated thusly.
@@ -113,7 +114,6 @@ It may make mores sense to ignore decoration. Please refer to the [How to ignore
 
 ## How to ignore rules in code
 It may be necessary to ignore a cop for a particular piece of code. We follow standard rubocop idioms.
-#### Ignoring
 ``` ruby
 raise("We don't want this translated")  # rubocop:disable GetText/DecorateFunctionMessage 
 ```
