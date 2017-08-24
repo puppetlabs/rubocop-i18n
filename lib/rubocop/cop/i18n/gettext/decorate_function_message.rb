@@ -49,15 +49,15 @@ module RuboCop
 
           def how_bad_is_it(node, method_name, message)
             if message.str_type?
-              add_offense(message, :expression, "'#{method_name}' should have a decorator around the message")
+              add_offense(message, :expression, "'#{method_name}' function, message string should be decorated")
             elsif message.multiline?
-              add_offense(message, :expression, "'#{method_name}' should not use a multi-line string")
+              add_offense(message, :expression, "'#{method_name}' function, message should not be a multi-line string")
             elsif concatenation_offense?(message)
-              add_offense(message, :expression, "'#{method_name}' should not use a concatenated string")
+              add_offense(message, :expression, "'#{method_name}' function, message should not be a concatenated string")
             elsif interpolation_offense?(message)
-              add_offense(message, :expression, "'#{method_name}' interpolation is a sin")
+              add_offense(message, :expression, "'#{method_name}' function, message should use correctly formatted interpolation")
             elsif !already_decorated?(node)
-              add_offense(message, :expression, "'#{method_name}' There is no decoration")
+              add_offense(message, :expression, "'#{method_name}' function, message should be decorated")
             end
           end
 
