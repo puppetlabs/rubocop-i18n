@@ -33,7 +33,7 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
     end
     context "#{function} with interpolated string" do
       it_behaves_like 'a_detecting_cop', "#{function}(\"a string \#{var}\")", function, 'message should use correctly formatted interpolation'
-#     it_behaves_like 'a_fixing_cop', "#{function}(\"a string \#{var}\")", "#{function}(_(\"a string %{value0}\")) % { value0: var, }", function
+      #it_behaves_like 'a_fixing_cop', "#{function}(\"a string \#{var}\")", "#{function}(_(\"a string %{value0}\") % { value0: var, })", function
       it_behaves_like 'a_no_cop_required', "#{function}(_(\"a string %{value0}\")) % { value0: var, }", function
     end
     context "#{function} message not decorated, but does not hit interpolation / concatenation / multi-line / simple-string" do
@@ -60,6 +60,7 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
       it 'has the correct error message' do
         expect(cop.offenses[0]).not_to be_nil
         expect(cop.offenses[0].message).to match(/message should not be a multi-line string/)
+        expect(cop.offenses[0].message).to match(/message should use correctly formatted interpolation/)
       end
 
       it 'has the correct number of offenses' do

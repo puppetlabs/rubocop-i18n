@@ -12,12 +12,12 @@ module RuboCop
             _, method_name, *arg_nodes = *node
             if !arg_nodes.empty? && !already_decorated?(node) && (contains_string?(arg_nodes) || string_constant?(arg_nodes))
               if string_constant?(arg_nodes)
-                arg_node = arg_nodes[1]
+                message_section = arg_nodes[1]
               else
-                arg_node = arg_nodes[0]
+                message_section = arg_nodes[0]
               end
 
-              how_bad_is_it(node, method_name, arg_node)
+              detect_and_report(node, message_section, method_name)
             end
           end
 
@@ -47,64 +47,76 @@ module RuboCop
             nodes[0].inspect.include?(":str") || nodes[0].inspect.include?(":dstr")
           end
 
-          def how_bad_is_it(node, method_name, message)
-            if message.str_type?
-              add_offense(message, :expression, "'#{method_name}' function, message string should be decorated")
-            elsif message.multiline?
-              add_offense(message, :expression, "'#{method_name}' function, message should not be a multi-line string")
-            elsif concatenation_offense?(message)
-              add_offense(message, :expression, "'#{method_name}' function, message should not be a concatenated string")
-            elsif interpolation_offense?(message)
-              add_offense(message, :expression, "'#{method_name}' function, message should use correctly formatted interpolation")
-            elsif !already_decorated?(node)
-              add_offense(message, :expression, "'#{method_name}' function, message should be decorated")
+          def detect_and_report(node, message_section, method_name)
+            errors = how_bad_is_it(message_section)
+            return if errors.empty?
+            error_message = "'#{method_name}' function, "
+            errors.each do |error|
+              error_message << 'message string should be decorated. ' if error == :simple
+              error_message << 'message should not be a concatenated string. ' if error == :concatenation
+              error_message << 'message should not be a multi-line string. ' if error == :multiline
+              error_message << 'message should use correctly formatted interpolation. ' if error == :interpolation
+              error_message << 'message should be decorated. ' if error == :no_decoration
             end
+            add_offense(message_section, :expression, error_message)
           end
 
-          def concatenation_offense?(message)
-            found_concat = false
-            found_strings = false
-              message.children.each { |child|
-                if child == :+
-                  found_concat = true
-                elsif ( (!child.nil? && child.class != Symbol) && ( child.str_type? || child.dstr_type? ) )
-                  found_strings = true
-                end
-              }
-            found_concat && found_strings
+          def how_bad_is_it(message_section)
+            errors = []
+
+            errors.push :simple if message_section.str_type?
+            errors.push :multiline if message_section.multiline?
+            errors.push :concatenation if concatenation_offense?(message_section)
+            errors.push :interpolation if interpolation_offense?(message_section)
+            errors.push :no_decoration if !already_decorated?(message_section)
+
+            # only display no_decoration, if that is the only problem.
+            if errors.size > 1 && errors.include?(:no_decoration)
+              errors.delete(:no_decoration)
+            end
+            errors
           end
 
-          def interpolation_offense?(message)
-            found = false
-            message.children.each { |child|
-              if !child.nil? && child.class != Symbol
-                if child.begin_type? || child.send_type?
-                  found = true
-                elsif child.dstr_type?
-                  found = true if child.inspect.include?(":send") || child.inspect.include?(":begin")
-                end
-              end
-            }
-            found
+          def concatenation_offense?(node, parent = nil)
+            parent ||= node
+
+            if node.respond_to?(:loc) && node.loc.respond_to?(:selector)
+              return true if node.loc.selector.source == '+'
+            end
+
+            return false unless node.respond_to?(:children)
+
+            node.children.any? { |child| concatenation_offense?(child, parent) }
+          end
+
+          def interpolation_offense?(node, parent = nil)
+            parent ||= node
+
+            return true if node.class == RuboCop::AST::Node  && node.dstr_type?
+
+            return false unless node.respond_to?(:children)
+
+            node.children.any? { |child| interpolation_offense?(child, parent) }
           end
 
           def autocorrect(node)
             if node.str_type?
               single_string_correct(node)
             elsif interpolation_offense?(node)
-            # interpolation_correct(node)
+#              interpolation_correct(node)
             end
           end
 
           def single_string_correct(node)
-            ->(corrector) { corrector.insert_before(node.source_range , "_(")
+            ->(corrector) {
+              corrector.insert_before(node.source_range , "_(")
             corrector.insert_after(node.source_range , ")") }
           end
 
           def interpolation_correct(node)
             interpolated_values_string = ""
             count = 0
-            ->(corrector) { 
+            ->(corrector) {
               node.children.each do |child|
                 # dstrs are split into "str" segments and other segments.
                 # The "other" segments are the interpolated values.
@@ -132,9 +144,9 @@ module RuboCop
               if !interpolated_values_string.empty?
                 interpolated_values_string << "}"
               end
-              corrector.insert_before(node.source_range, '_(') 
-              corrector.insert_after(node.source_range, ") % #{interpolated_values_string}") 
-            } 
+              corrector.insert_before(node.source_range, '_(')
+              corrector.insert_after(node.source_range, ") % #{interpolated_values_string}")
+            }
           end
 
         end
