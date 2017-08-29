@@ -35,6 +35,7 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
       it_behaves_like 'a_detecting_cop', "#{function}(\"a string \#{var}\")", function, 'message should use correctly formatted interpolation'
       #it_behaves_like 'a_fixing_cop', "#{function}(\"a string \#{var}\")", "#{function}(_(\"a string %{value0}\") % { value0: var, })", function
       it_behaves_like 'a_no_cop_required', "#{function}(_(\"a string %{value0}\")) % { value0: var, }", function
+      it_behaves_like 'a_no_cop_required', "#{function}(N_(\"a string %s\"))", function
     end
     context "#{function} message not decorated, but does not hit interpolation / concatenation / multi-line / simple-string" do
       it_behaves_like 'a_detecting_cop', "fail print('kittens')", function, 'message should be decorated'
