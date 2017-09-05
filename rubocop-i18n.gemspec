@@ -4,13 +4,13 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "rubocop-i18n"
-  spec.version       = '0.0.1'
-  spec.authors       = ["Brandon High"]
-  spec.email         = ["brandon.high@puppet.com"]
+  spec.version       = '1.0.0'
+  spec.authors       = ["Brandon High", "TP Honey", "Helen Campbell"]
+  spec.email         = ["brandon.high@puppet.com", "tp@puppet.com", "helen@puppet.com"]
 
   spec.summary       = %q{RuboCop rules for i18n}
   spec.description   = %q{RuboCop rules for detecting and autocorrecting undecorated strings for i18n}
-  spec.homepage      = "https://github.com/highb/rubocop-i18n"
+  spec.homepage      = "https://github.com/puppetlabs/rubocop-i18n"
   spec.license       = 'Apache-2'
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
