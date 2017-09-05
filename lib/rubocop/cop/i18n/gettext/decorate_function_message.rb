@@ -4,7 +4,7 @@ module RuboCop
       module GetText
         class DecorateFunctionMessage < Cop
           SUPPORTED_METHODS = ['raise', 'fail']
-          SUPPORTED_DECORATORS = ["_", 'n_']
+          SUPPORTED_DECORATORS = ['_', 'n_', 'N_']
 
           def on_send(node)
             method_name = node.loc.selector.source
