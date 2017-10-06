@@ -29,6 +29,10 @@ GetText/DecorateString:
   Enabled: false
 GetText/DecorateFunctionMessage:
   Enabled: true
+GetText/DecorateStringFormattingUsingInterpolation
+  Enabled: true
+GetText/DecorateStringFormattingUsingPercent
+  Enabled: true
 ```
 
 ## Cops
@@ -149,16 +153,69 @@ raise(someOtherFuntioncall(foo, "bar"))
 In this raise or fail function, the message does not contain any decoration at all and the message is not a simple string. It may make sense to convert the message to a simple string. eg [Simple decoration of a message](#Simple-decoration-of-a-message). 
 Or ignore this raise or fail function following this [How to ignore rules in code](#How-to-ignore-rules-in-code) section.
 
+### GetText/DecorateStringFormattingUsingInterpolation
+
+This cop looks for decorated gettext methods _() and checks that all strings contained
+within do not use string interpolation '#{}'
+
+#### Simple decoration of a message
+
+Simple message strings should be decorated with the _() function
+
+##### Error message thrown
+
+```
+'_' function, message string should not contain #{} formatting
+```
+
+##### Bad
+
+``` ruby
+puts _("a message with a #{'interpolation'}")
+```
+
+##### Good
+
+``` ruby
+puts _("a message that is %{type}") % { type: 'translatable' }
+```
+
+### GetText/DecorateStringFormattingUsingPercent
+
+This cop looks for decorated gettext methods _() and checks that all strings contained
+within do not use sprintf formatting '%s' etc
+
+##### Error message thrown
+
+```
+'_' function, message string should not contain sprintf style formatting (ie %s)
+```
+
+##### Bad
+
+``` ruby
+raise(_("Warning is %s") % ['bad'])
+```
+
+##### Good
+
+``` ruby
+raise(_("Warning is %{value}") % { value: 'bad' })
+```
+
 ## How to ignore rules in code
 
 It may be necessary to ignore a cop for a particular piece of code. We follow standard rubocop idioms.
 ``` ruby
-raise("We don't want this translated")  # rubocop:disable GetText/DecorateFunctionMessage 
+raise("We don't want this translated")  # rubocop:disable GetText/DecorateFunctionMessage
+raise(_("We don't want this translated #{crazy}")  # rubocop:disable GetText/DecorateStringFormattingUsingInterpolation)
+raise(_("We don't want this translated %s") % ['crazy'] # rubocop:disable GetText/DecorateStringFormattingUsingPercent)
 ```
 
 ## Known Issues
 
 Rubocop currently does not detect Heredoc style messages in functions correctly, which in turn prevents this plugin from detecting them correctly.
+Not all sprintf formatting strings are detected.
 
 ## Development
 
