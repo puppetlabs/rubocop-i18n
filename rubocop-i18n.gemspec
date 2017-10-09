@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "rubocop-i18n"
-  spec.version       = '1.0.0'
+  spec.version       = '1.1.0'
   spec.authors       = ["Brandon High", "TP Honey", "Helen Campbell"]
   spec.email         = ["brandon.high@puppet.com", "tp@puppet.com", "helen@puppet.com"]
 
