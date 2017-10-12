@@ -25,8 +25,6 @@ In your `rubocop.yml`:
 require:
  - rubocop-i18n
 ...
-GetText/DecorateString:
-  Enabled: false
 GetText/DecorateFunctionMessage:
   Enabled: true
 GetText/DecorateStringFormattingUsingInterpolation
