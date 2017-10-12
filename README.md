@@ -26,7 +26,7 @@ require:
  - rubocop-i18n
 ...
 GetText/DecorateString:
-  Enabled: false
+  Enabled: true
 GetText/DecorateFunctionMessage:
   Enabled: true
 GetText/DecorateStringFormattingUsingInterpolation
@@ -36,6 +36,42 @@ GetText/DecorateStringFormattingUsingPercent
 ```
 
 ## Cops
+
+### GetText/DecorateString
+
+This cop is looks for strings that appear to be sentences but are not decorated. 
+Sentences are determined by the STRING_REGEXP.
+
+##### Error message thrown 
+
+```
+decorator is missing around string, instead found <method>
+```
+or
+```
+decorator is missing around string
+```
+
+##### Bad
+
+``` ruby
+"Result is bad."
+```
+
+##### Good
+
+``` ruby
+_("Result is good.")
+```
+
+##### Ignored
+``` ruby
+"string"
+"A string with out a punctuation at the end"
+"a string that doesn't start with a capital letter."
+```
+
+
 
 ### GetText/DecorateFunctionMessage
 
@@ -207,6 +243,7 @@ raise(_("Warning is %{value}") % { value: 'bad' })
 
 It may be necessary to ignore a cop for a particular piece of code. We follow standard rubocop idioms.
 ``` ruby
+raise("We don't want this translated.")  # rubocop:disable GetText/DecorateString
 raise("We don't want this translated")  # rubocop:disable GetText/DecorateFunctionMessage
 raise(_("We don't want this translated #{crazy}")  # rubocop:disable GetText/DecorateStringFormattingUsingInterpolation)
 raise(_("We don't want this translated %s") % ['crazy'] # rubocop:disable GetText/DecorateStringFormattingUsingPercent)

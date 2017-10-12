@@ -4,9 +4,9 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "rubocop-i18n"
-  spec.version       = '1.1.0'
-  spec.authors       = ["Brandon High", "TP Honey", "Helen Campbell"]
-  spec.email         = ["brandon.high@puppet.com", "tp@puppet.com", "helen@puppet.com"]
+  spec.version       = '1.2.0'
+  spec.authors       = ["Puppet", "Brandon High", "TP Honey", "Helen Campbell"]
+  spec.email         = ["team-modules@puppet.com", "brandon.high@puppet.com", "tp@puppet.com", "helen@puppet.com"]
 
   spec.summary       = %q{RuboCop rules for i18n}
   spec.description   = %q{RuboCop rules for detecting and autocorrecting undecorated strings for i18n}
