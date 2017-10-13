@@ -1,6 +1,7 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+rubocop_version = "~> 0.49.0"
 
 Gem::Specification.new do |spec|
   spec.name          = "rubocop-i18n"
@@ -25,5 +26,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rb-readline"
   spec.add_development_dependency "pry"
-  spec.add_runtime_dependency "rubocop", "~> 0.49"
+  spec.add_development_dependency "rubocop", rubocop_version
+  spec.add_runtime_dependency "rubocop", rubocop_version
 end
