@@ -3,12 +3,9 @@ module RuboCop
     module I18n
       module GetText
         class DecorateFunctionMessage < Cop
-          SUPPORTED_METHODS = ['raise', 'fail']
-          SUPPORTED_DECORATORS = ['_', 'n_', 'N_']
-
           def on_send(node)
             method_name = node.loc.selector.source
-            return if !supported_method_name?(method_name)
+            return if !GetText.supported_method?(method_name)
             _, method_name, *arg_nodes = *node
             if !arg_nodes.empty? && !already_decorated?(node) && (contains_string?(arg_nodes) || string_constant?(arg_nodes))
               if string_constant?(arg_nodes)
@@ -22,16 +19,11 @@ module RuboCop
           end
 
           private
-
-          def supported_method_name?(method_name)
-            SUPPORTED_METHODS.include?(method_name)
-          end
-
           def already_decorated?(node, parent = nil)
             parent ||= node
 
             if node.respond_to?(:loc) && node.loc.respond_to?(:selector)
-              return true if SUPPORTED_DECORATORS.include?(node.loc.selector.source)
+              return true if GetText.supported_decorator?(node.loc.selector.source)
             end
 
             return false unless node.respond_to?(:children)

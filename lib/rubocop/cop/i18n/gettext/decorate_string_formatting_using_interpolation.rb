@@ -20,12 +20,9 @@ module RuboCop
         #   _("result is %{detail}" % {detail: message})
         #
         class DecorateStringFormattingUsingInterpolation < Cop
-
-          SUPPORTED_DECORATORS = ['_', 'n_', 'N_']
-
           def on_send(node)
             decorator_name = node.loc.selector.source
-            return if !supported_decorator_name?(decorator_name)
+            return if !GetText.supported_decorator?(decorator_name)
             _, method_name, *arg_nodes = *node
             if !arg_nodes.empty? && contains_string_formatting_with_interpolation?(arg_nodes)
               message_section = arg_nodes[0]
@@ -34,11 +31,6 @@ module RuboCop
           end
 
           private
-
-          def supported_decorator_name?(decorator_name)
-            SUPPORTED_DECORATORS.include?(decorator_name)
-          end
-
           def string_contains_interpolation_format?(str)
             str.match(/\#{[^}]+}/)
           end
