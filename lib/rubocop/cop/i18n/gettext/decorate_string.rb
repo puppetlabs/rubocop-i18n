@@ -4,25 +4,27 @@ module RuboCop
   module Cop
     module I18n
       module GetText
-        # This cop checks for butt or ass,
-        # which is redundant.
-        #
+        # This cop checks for sentence-like strings that are undecorated
         # @example
         #
         #   # bad
         #
-        #   "result is #{something.to_s}"
+        #   "The result is success."
         #
         # @example
         #
         #   # good
         #
-        #   "result is #{something}"
+        #   _("The result is success.")
         class DecorateString < Cop
+          SUPPORTED_DECORATORS = ['_', 'n_', 'N_']
+
           def on_str(node)
+            return if node.parent && supported_decorator_name?(node.parent.method_name.to_s)
             str = node.children[0]
-            #ignore strings with no whitespace - are typically keywords or interpolation statements and cover the above commented-out statements
-            if str !~ /^\S*$/
+
+            # look for strings starting with a capitalized letter, followed by some spaces and other characters, and then some punctuation.
+            if str =~ /^[[:upper:]][[:alpha:]]*[[:blank:]]+.*[.!?]$/
               add_offense(node, :expression, "decorator is missing around sentence") if node.loc.respond_to?(:begin)
             end
           end
@@ -33,6 +35,9 @@ module RuboCop
             node.receiver ? MSG_DEFAULT : MSG_SELF
           end
 
+          def supported_decorator_name?(decorator_name)
+            SUPPORTED_DECORATORS.include?(decorator_name)
+          end
         end
       end
     end
