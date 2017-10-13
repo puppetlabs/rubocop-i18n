@@ -8,8 +8,7 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
     investigate(cop, source)
   }
 
-  functions = ['fail', 'raise']
-  functions.each do |function|
+  RuboCop::Cop::I18n::GetText.SUPPORTED_METHODS.each do |function|
     context "#{function} with undecorated double-quote message" do
       it_behaves_like 'a_detecting_cop', "#{function}(\"a string\")", function, 'message string should be decorated'
       it_behaves_like 'a_fixing_cop', "#{function}(\"a string\")", "#{function}(_(\"a string\"))", function
@@ -47,11 +46,13 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
         expect(cop.offenses.size).to eq(0)
       end
     end
-    context "#{function} with the n_ decorator" do
-      it_behaves_like 'a_no_cop_required', "#{function}(n_(\"a string\"))", function
-      it_behaves_like 'a_no_cop_required', "#{function}(n_('a string'))", function
-      it_behaves_like 'a_no_cop_required', "#{function}(CONSTANT, n_('a string'))", function
-      it_behaves_like 'a_no_cop_required', "#{function}(n_(\"a string %{value0}\")) % { value0: var, }", function
+    RuboCop::Cop::I18n::GetText.SUPPORTED_DECORATORS.each do |decorator|
+      context "#{function} with the #{decorator} decorator" do
+        it_behaves_like 'a_no_cop_required', "#{function}(#{decorator}(\"a string\"))", function
+        it_behaves_like 'a_no_cop_required', "#{function}(#{decorator}('a string'))", function
+        it_behaves_like 'a_no_cop_required', "#{function}(CONSTANT, #{decorator}('a string'))", function
+        it_behaves_like 'a_no_cop_required', "#{function}(#{decorator}(\"a string %{value0}\")) % { value0: var, }", function
+      end
     end
   end
   context "real life examples," do
@@ -69,7 +70,7 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
       end
 
       it 'autocorrects', broken: true do
-        corrected = autocorrect_source( "raise(Puppet::ParseError, \"mysql_password(): Wrong number of arguments \" \\ \"given (\#{args.size} for 1)\")" ) 
+        corrected = autocorrect_source( "raise(Puppet::ParseError, \"mysql_password(): Wrong number of arguments \" \\ \"given (\#{args.size} for 1)\")" )
         expect(corrected).to eq("raise(Puppet::ParseError, _(\"a string %{value0}\") % { value0: var, })")
       end
     end
