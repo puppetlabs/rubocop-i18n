@@ -4,13 +4,13 @@ module RuboCop
   module Cop
     module I18n
       module GetText
-        def self.SUPPORTED_METHODS
+        def self.supported_methods
           ['raise', 'fail']
         end
         # Supports decorators from
         # * mutoh/gettext https://github.com/mutoh/gettext/blob/master/lib/gettext.rb
         # * grosser/fast_gettext https://github.com/grosser/fast_gettext/blob/master/lib/fast_gettext/translation.rb
-        def self.SUPPORTED_DECORATORS
+        def self.supported_decorators
           [
             '_',
             'n_',
@@ -32,11 +32,11 @@ module RuboCop
         end
 
         def self.supported_method?(method_name)
-          self.SUPPORTED_METHODS.include?(method_name)
+          supported_methods.include?(method_name)
         end
 
         def self.supported_decorator?(decorator_name)
-          self.SUPPORTED_DECORATORS.include?(decorator_name)
+          supported_decorators.include?(decorator_name)
         end
       end
     end
