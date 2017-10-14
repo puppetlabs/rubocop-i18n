@@ -22,7 +22,7 @@ module RuboCop
         class DecorateStringFormattingUsingInterpolation < Cop
           def on_send(node)
             decorator_name = node.loc.selector.source
-            return if !GetText.supported_decorator?(decorator_name)
+            return unless GetText.supported_decorator?(decorator_name)
             _, method_name, *arg_nodes = *node
             if !arg_nodes.empty? && contains_string_formatting_with_interpolation?(arg_nodes)
               message_section = arg_nodes[0]
@@ -31,6 +31,7 @@ module RuboCop
           end
 
           private
+
           def string_contains_interpolation_format?(str)
             str.match(/\#{[^}]+}/)
           end
@@ -41,7 +42,7 @@ module RuboCop
             end
 
             if node.respond_to?(:type)
-              if node.type == :str or node.type == :dstr
+              if node.type == :str || node.type == :dstr
                 return string_contains_interpolation_format?(node.source)
               end
             end
@@ -49,9 +50,8 @@ module RuboCop
             if node.respond_to?(:children)
               return node.children.any? { |child| contains_string_formatting_with_interpolation?(child) }
             end
-            return false
+            false
           end
-
         end
       end
     end

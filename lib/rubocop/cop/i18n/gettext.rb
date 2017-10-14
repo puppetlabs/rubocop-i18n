@@ -5,29 +5,30 @@ module RuboCop
     module I18n
       module GetText
         def self.supported_methods
-          ['raise', 'fail']
+          %w[raise fail]
         end
+
         # Supports decorators from
         # * mutoh/gettext https://github.com/mutoh/gettext/blob/master/lib/gettext.rb
         # * grosser/fast_gettext https://github.com/grosser/fast_gettext/blob/master/lib/fast_gettext/translation.rb
         def self.supported_decorators
-          [
-            '_',
-            'n_',
-            'np_',
-            'ns_',
-            'N_',
-            'Nn_',
-            'D_',
-            'Dn_',
-            'Ds_',
-            'Dns_',
-            'd_',
-            'dn_',
-            'ds_',
-            'dns_',
-            'p_',
-            's_',
+          %w[
+            _
+            n_
+            np_
+            ns_
+            N_
+            Nn_
+            D_
+            Dn_
+            Ds_
+            Dns_
+            d_
+            dn_
+            ds_
+            dns_
+            p_
+            s_
           ]
         end
 

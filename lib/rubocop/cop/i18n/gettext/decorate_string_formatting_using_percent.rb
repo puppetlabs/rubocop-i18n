@@ -22,11 +22,11 @@ module RuboCop
         #   _("result is %{detail}" % {detail: message})
         #
         class DecorateStringFormattingUsingPercent < Cop
-          SUPPORTED_FORMATS = %w[b B d i o u x X e E f g G a A c p s]
+          SUPPORTED_FORMATS = %w[b B d i o u x X e E f g G a A c p s].freeze
 
           def on_send(node)
             decorator_name = node.loc.selector.source
-            return if !GetText.supported_decorator?(decorator_name)
+            return unless GetText.supported_decorator?(decorator_name)
             _, method_name, *arg_nodes = *node
             if !arg_nodes.empty? && contains_string_with_percent_format?(arg_nodes)
               message_section = arg_nodes[0]
@@ -35,6 +35,7 @@ module RuboCop
           end
 
           private
+
           def string_contains_percent_format?(str)
             SUPPORTED_FORMATS.any? { |format| str.match(/%([-+])?[0-9]*(\.[0-9]*)?#{format}/) }
           end
@@ -45,7 +46,7 @@ module RuboCop
             end
 
             if node.respond_to?(:type)
-              if node.type == :str or node.type == :dstr
+              if node.type == :str || node.type == :dstr
                 return string_contains_percent_format?(node.source)
               end
             end
@@ -55,7 +56,6 @@ module RuboCop
             end
             false
           end
-
         end
       end
     end
