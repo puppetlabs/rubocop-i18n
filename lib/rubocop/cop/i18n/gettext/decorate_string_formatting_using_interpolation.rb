@@ -3,8 +3,9 @@ module RuboCop
     module I18n
       module GetText
         # When using an decorated string to support I18N, any strings inside the decoration should not contain
-        # the '#{}' interpolation string as this makes it hard to translate the strings. This cop checks the
-        # decorators listed in SUPPORTED_DECORATORS
+        # the '#{}' interpolation string as this makes it hard to translate the strings.
+        #
+        # Check GetText.supported_decorators for a list of decorators that can be used.
         #
         # @example
         #

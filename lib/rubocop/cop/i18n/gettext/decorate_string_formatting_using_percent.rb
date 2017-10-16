@@ -4,7 +4,7 @@ module RuboCop
       module GetText
         # When using a decorated string to support I18N, any strings inside the decoration should not contain sprintf
         # style formatting as this makes it hard to translate the string. This cop checks the decorators listed in
-        # SUPPORTED_DECORATORS and checks for each of the formats in SUPPORTED_FORMATS. NOTE: this cop does not
+        # GetText.supported_decorators and checks for each of the formats in SUPPORTED_FORMATS. NOTE: this cop does not
         # check for all possible sprintf formats.
         #
         # @example
