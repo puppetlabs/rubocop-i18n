@@ -9,8 +9,7 @@ describe RuboCop::Cop::I18n::GetText::DecorateStringFormattingUsingPercent do
     investigate(cop, source)
   end
 
-  decorators = %w[_ n_ N_]
-  decorators.each do |decorator|
+  RuboCop::Cop::I18n::GetText.supported_decorators.each do |decorator|
     context "#{decorator} decoration not used" do
       it_behaves_like 'a_no_cop_required', 'thing("a %s that is not decorated")'
     end
