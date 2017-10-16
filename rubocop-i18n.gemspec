@@ -6,7 +6,7 @@ rubocop_version = '~> 0.49.0'
 
 Gem::Specification.new do |spec|
   spec.name          = 'rubocop-i18n'
-  spec.version       = '1.1.0'
+  spec.version       = '1.2.0'
   spec.authors       = ['Puppet', 'Brandon High', 'TP Honey', 'Helen Campbell']
   spec.email         = ['team-modules@puppet.com', 'brandon.high@puppet.com', 'tp@puppet.com', 'helen@puppet.com']
 
