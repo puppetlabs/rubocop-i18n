@@ -12,7 +12,7 @@ describe RuboCop::Cop::I18n::GetText::DecorateStringFormattingUsingInterpolation
   decorators = %w[_ n_ N_]
   decorators.each do |decorator|
     context "#{decorator} decoration not used" do
-      it_behaves_like 'a_no_cop_required', 'thing("a true that is not decorated")'
+      it_behaves_like 'a_no_cop_required', 'thing("a \#{true} that is not decorated")'
     end
 
     context "#{decorator} decoration used but strings contain no \#{}" do
