@@ -6,9 +6,6 @@ describe RuboCop::Cop::I18n::GetText::DecorateString do
   let(:config) { RuboCop::Config.new }
   subject(:cop) { described_class.new(config) }
 
-  # For some reason, this string isn't considered decorated.
-  # it_behaves_like 'accepts', '_("a string")'
-
   context 'undecorated string' do
     let(:source) do
       <<-RUBY
