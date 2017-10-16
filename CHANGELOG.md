@@ -2,6 +2,9 @@
 
 ## master (unreleased)
 
+ * Code restructure (no API changes)
+ * RuboCop lint fixes
+
 ### 1.1.0
 
  * Added support for DecorateStringFormattingUsingPercent

@@ -1,18 +1,17 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 describe RuboCop::Cop::I18n::GetText::DecorateStringFormattingUsingInterpolation do
-  let(:config) {RuboCop::Config.new}
-  subject(:cop) {described_class.new(config)}
-  before(:each) {
+  let(:config) { RuboCop::Config.new }
+  subject(:cop) { described_class.new(config) }
+  before(:each) do
     investigate(cop, source)
-  }
+  end
 
-  decorators = ['_', 'n_', 'N_']
-  decorators.each do |decorator|
-
+  RuboCop::Cop::I18n::GetText.supported_decorators.each do |decorator|
     context "#{decorator} decoration not used" do
-      it_behaves_like 'a_no_cop_required', "thing(\"a #{true} that is not decorated\")"
+      it_behaves_like 'a_no_cop_required', 'thing("a \#{true} that is not decorated")'
     end
 
     context "#{decorator} decoration used but strings contain no \#{}" do
@@ -39,5 +38,4 @@ describe RuboCop::Cop::I18n::GetText::DecorateStringFormattingUsingInterpolation
       it_behaves_like 'a_detecting_cop', "#{decorator}(CONSTANT, \"a \#{true}\")", '_', 'function, message string should not contain #{} formatting'
     end
   end
-
 end

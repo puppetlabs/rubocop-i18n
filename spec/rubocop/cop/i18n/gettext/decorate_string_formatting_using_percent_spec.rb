@@ -1,18 +1,17 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 describe RuboCop::Cop::I18n::GetText::DecorateStringFormattingUsingPercent do
-  let(:config) {RuboCop::Config.new}
-  subject(:cop) {described_class.new(config)}
-  before(:each) {
+  let(:config) { RuboCop::Config.new }
+  subject(:cop) { described_class.new(config) }
+  before(:each) do
     investigate(cop, source)
-  }
+  end
 
-  decorators = ['_', 'n_', 'N_']
-  decorators.each do |decorator|
-
+  RuboCop::Cop::I18n::GetText.supported_decorators.each do |decorator|
     context "#{decorator} decoration not used" do
-      it_behaves_like 'a_no_cop_required', "thing(\"a %s that is not decorated\")"
+      it_behaves_like 'a_no_cop_required', 'thing("a %s that is not decorated")'
     end
 
     context "#{decorator} decoration used but strings contain no % format" do
@@ -29,7 +28,6 @@ describe RuboCop::Cop::I18n::GetText::DecorateStringFormattingUsingPercent do
 
     formats = %w[b B d i o u x X e E f g G a A c p s]
     formats.each do |format|
-
       context "#{decorator} decoration with string % format" do
         it_behaves_like 'a_detecting_cop', "#{decorator}(\"a %#{format} string\")", '_', 'message string should not contain sprintf style formatting'
         it_behaves_like 'a_detecting_cop', "#{decorator}(\"a %#{format} string\" % [\"thing\"])", '_', 'message string should not contain sprintf style formatting'

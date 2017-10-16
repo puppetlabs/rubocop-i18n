@@ -3,8 +3,9 @@ module RuboCop
     module I18n
       module GetText
         # When using an decorated string to support I18N, any strings inside the decoration should not contain
-        # the '#{}' interpolation string as this makes it hard to translate the strings. This cop checks the
-        # decorators listed in SUPPORTED_DECORATORS
+        # the '#{}' interpolation string as this makes it hard to translate the strings.
+        #
+        # Check GetText.supported_decorators for a list of decorators that can be used.
         #
         # @example
         #
@@ -20,12 +21,9 @@ module RuboCop
         #   _("result is %{detail}" % {detail: message})
         #
         class DecorateStringFormattingUsingInterpolation < Cop
-
-          SUPPORTED_DECORATORS = ['_', 'n_', 'N_']
-
           def on_send(node)
             decorator_name = node.loc.selector.source
-            return if !supported_decorator_name?(decorator_name)
+            return unless GetText.supported_decorator?(decorator_name)
             _, method_name, *arg_nodes = *node
             if !arg_nodes.empty? && contains_string_formatting_with_interpolation?(arg_nodes)
               message_section = arg_nodes[0]
@@ -34,10 +32,6 @@ module RuboCop
           end
 
           private
-
-          def supported_decorator_name?(decorator_name)
-            SUPPORTED_DECORATORS.include?(decorator_name)
-          end
 
           def string_contains_interpolation_format?(str)
             str.match(/\#{[^}]+}/)
@@ -49,7 +43,7 @@ module RuboCop
             end
 
             if node.respond_to?(:type)
-              if node.type == :str or node.type == :dstr
+              if node.type == :str || node.type == :dstr
                 return string_contains_interpolation_format?(node.source)
               end
             end
@@ -57,9 +51,8 @@ module RuboCop
             if node.respond_to?(:children)
               return node.children.any? { |child| contains_string_formatting_with_interpolation?(child) }
             end
-            return false
+            false
           end
-
         end
       end
     end
