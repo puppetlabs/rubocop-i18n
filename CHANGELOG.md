@@ -2,6 +2,7 @@
 
 ## master (unreleased)
 
+ * Updated DecorateString to look for sentences using a regular expression that should be decorated. This limits the number of strings that it finds to things that look like a sentence.
  * Code restructure (no API changes)
  * RuboCop lint fixes
 

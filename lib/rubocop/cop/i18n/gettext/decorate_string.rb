@@ -4,33 +4,69 @@ module RuboCop
   module Cop
     module I18n
       module GetText
-        # This cop checks for butt or ass,
-        # which is redundant.
+        # This cop is looks for strings that appear to be sentences but are not decorated.
+        # Sentences are determined by the STRING_REGEXP. (Upper case character, at least one space,
+        # and sentence punctuation at the end)
         #
         # @example
         #
         #   # bad
         #
-        #   "result is #{something.to_s}"
+        #   "Result is bad."
         #
         # @example
         #
         #   # good
         #
-        #   "result is #{something}"
+        #   _("Result is good.")
         class DecorateString < Cop
+          STRING_REGEXP = /^\s*[[:upper:]][[:alpha:]]*[[:blank:]]+.*[.!?]$/
+
+          def on_dstr(node)
+            check_for_parent_decorator(node) if dstr_contains_sentence?(node)
+          end
+
           def on_str(node)
-            str = node.children[0]
-            # ignore strings with no whitespace - are typically keywords or interpolation statements and cover the above commented-out statements
-            if str !~ /^\S*$/
-              add_offense(node, :expression, 'decorator is missing around sentence') if node.loc.respond_to?(:begin)
+            return unless sentence?(node)
+
+            parent = node.parent
+            if parent.respond_to?(:type)
+              return if parent.type == :regexp || parent.type == :dstr
             end
+
+            check_for_parent_decorator(node)
           end
 
           private
 
-          def message(node)
-            node.receiver ? MSG_DEFAULT : MSG_SELF
+          def sentence?(node)
+            child = node.children[0]
+            if child.is_a?(String)
+              if child.valid_encoding?
+                child.encode(Encoding::UTF_8).chomp =~ STRING_REGEXP
+              else
+                false
+              end
+            elsif child.respond_to?(:type) && child.type == :str
+              sentence?(child)
+            else
+              false
+            end
+          end
+
+          def dstr_contains_sentence?(node)
+            node.children.any? { |child| sentence?(child) }
+          end
+
+          def check_for_parent_decorator(node)
+            parent = node.parent
+            if parent.respond_to?(:type) && parent.type == :send
+              method_name = parent.loc.selector.source
+              return if GetText.supported_decorator?(method_name)
+            elsif parent.respond_to?(:method_name) && parent.method_name == :[]
+              return
+            end
+            add_offense(node, :expression, 'decorator is missing around sentence')
           end
         end
       end
