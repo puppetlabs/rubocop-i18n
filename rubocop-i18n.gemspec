@@ -1,6 +1,6 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-rubocop_version = '~> 0.51.0'
+rubocop_version = '~> 0.51'
 
 Gem::Specification.new do |spec|
   spec.name          = 'rubocop-i18n'
