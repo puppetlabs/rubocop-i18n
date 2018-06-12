@@ -66,7 +66,7 @@ module RuboCop
             elsif parent.respond_to?(:method_name) && parent.method_name == :[]
               return
             end
-            add_offense(node, :expression, 'decorator is missing around sentence')
+            add_offense(node, location: :expression, message: 'decorator is missing around sentence')
           end
         end
       end

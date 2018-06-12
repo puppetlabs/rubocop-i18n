@@ -27,7 +27,7 @@ module RuboCop
             _, method_name, *arg_nodes = *node
             if !arg_nodes.empty? && contains_string_formatting_with_interpolation?(arg_nodes)
               message_section = arg_nodes[0]
-              add_offense(message_section, :expression, "'#{method_name}' function, message string should not contain \#{} formatting")
+              add_offense(message_section, location: :expression, message: "'#{method_name}' function, message string should not contain \#{} formatting")
             end
           end
 

@@ -51,7 +51,7 @@ module RuboCop
               error_message << 'message should use correctly formatted interpolation. ' if error == :interpolation
               error_message << 'message should be decorated. ' if error == :no_decoration
             end
-            add_offense(message_section, :expression, error_message)
+            add_offense(message_section, location: :expression, message: error_message)
           end
 
           def how_bad_is_it(message_section)

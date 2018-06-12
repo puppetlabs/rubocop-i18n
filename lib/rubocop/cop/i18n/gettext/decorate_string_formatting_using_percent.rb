@@ -30,7 +30,7 @@ module RuboCop
             _, method_name, *arg_nodes = *node
             if !arg_nodes.empty? && contains_string_with_percent_format?(arg_nodes)
               message_section = arg_nodes[0]
-              add_offense(message_section, :expression, "'#{method_name}' function, message string should not contain sprintf style formatting (ie %s)")
+              add_offense(message_section, location: :expression, message: "'#{method_name}' function, message string should not contain sprintf style formatting (ie %s)")
             end
           end
 
