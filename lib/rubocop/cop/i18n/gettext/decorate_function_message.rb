@@ -18,6 +18,14 @@ module RuboCop
             end
           end
 
+          def autocorrect(node)
+            if node.str_type?
+              single_string_correct(node)
+            elsif interpolation_offense?(node)
+              #              interpolation_correct(node)
+            end
+          end
+
           private
 
           def already_decorated?(node, parent = nil)
@@ -85,19 +93,11 @@ module RuboCop
           def interpolation_offense?(node, parent = nil)
             parent ||= node
 
-            return true if node.class == RuboCop::AST::Node && node.dstr_type?
+            return true if node.respond_to?(:dstr_type?) && node.dstr_type?
 
             return false unless node.respond_to?(:children)
 
             node.children.any? { |child| interpolation_offense?(child, parent) }
-          end
-
-          def autocorrect(node)
-            if node.str_type?
-              single_string_correct(node)
-            elsif interpolation_offense?(node)
-              #              interpolation_correct(node)
-            end
           end
 
           def single_string_correct(node)
