@@ -18,7 +18,6 @@ describe RuboCop::Cop::I18n::GetText::DecorateString do
     it_behaves_like 'a_no_cop_required', "'keyword'"
     # a regexp is a string
     it_behaves_like 'a_no_cop_required', '@regexp = /[ =]/'
-    it_behaves_like 'a_no_cop_required', 'A sentence with out punctuation at the end'
     it_behaves_like 'a_no_cop_required', 'Dir[File.dirname(__FILE__) + "/parser/compiler/catalog_validator/*.rb"].each { |f| require f }'
     it_behaves_like 'a_no_cop_required', 'stream.puts "#@version\n" if @version'
     it_behaves_like 'a_no_cop_required', '
