@@ -31,7 +31,7 @@ module RuboCop
 
             parent = node.parent
             if parent.respond_to?(:type)
-              return if parent.type == :regexp || parent.type == :dstr
+              return if parent.regexp_type? || parent.dstr_type?
             end
 
             check_for_parent_decorator(node)
@@ -47,7 +47,7 @@ module RuboCop
               else
                 false
               end
-            elsif child.respond_to?(:type) && child.type == :str
+            elsif child.respond_to?(:type) && child.str_type?
               sentence?(child)
             else
               false
@@ -60,13 +60,13 @@ module RuboCop
 
           def check_for_parent_decorator(node)
             parent = node.parent
-            if parent.respond_to?(:type) && parent.type == :send
+            if parent.respond_to?(:type) && parent.send_type?
               method_name = parent.loc.selector.source
               return if GetText.supported_decorator?(method_name)
             elsif parent.respond_to?(:method_name) && parent.method_name == :[]
               return
             end
-            add_offense(node, location: :expression, message: 'decorator is missing around sentence')
+            add_offense(node, message: 'decorator is missing around sentence')
           end
         end
       end

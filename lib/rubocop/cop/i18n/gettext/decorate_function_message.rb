@@ -33,7 +33,7 @@ module RuboCop
           end
 
           def string_constant?(nodes)
-            nodes[0].type == :const && nodes[1]
+            nodes[0].const_type? && nodes[1]
           end
 
           def contains_string?(nodes)
@@ -51,7 +51,7 @@ module RuboCop
               error_message << 'message should use correctly formatted interpolation. ' if error == :interpolation
               error_message << 'message should be decorated. ' if error == :no_decoration
             end
-            add_offense(message_section, location: :expression, message: error_message)
+            add_offense(message_section, message: error_message)
           end
 
           def how_bad_is_it(message_section)
@@ -114,10 +114,10 @@ module RuboCop
               node.children.each do |child|
                 # dstrs are split into "str" segments and other segments.
                 # The "other" segments are the interpolated values.
-                next unless child.type == :begin
+                next unless child.begin_type?
                 value = child.children[0]
                 hash_key = 'value'
-                if value.type == :lvar
+                if value.lvar_type?
                   # Use the variable's name as the format key
                   hash_key = value.loc.name.source
                 else
