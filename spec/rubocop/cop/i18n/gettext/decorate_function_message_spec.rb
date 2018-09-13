@@ -40,13 +40,6 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage do
     context "#{function} message not decorated, but does not hit interpolation / concatenation / multi-line / simple-string" do
       it_behaves_like 'a_detecting_cop', "fail print('kittens')", function, 'message should be decorated'
     end
-    context "#{function} message not decorated, but rubocop ignore comment included" do
-      let(:cop_directive) { ' # rubcop:disable GetText/DecorateFunctionMessage' }
-      let(:source) { "raise('kitten'" }
-      it 'has the correct number of offenses' do
-        expect(cop.offenses.size).to eq(0)
-      end
-    end
     RuboCop::Cop::I18n::GetText.supported_decorators.each do |decorator|
       context "#{function} with the #{decorator} decorator" do
         it_behaves_like 'a_no_cop_required', "#{function}(#{decorator}(\"a string\"))", function

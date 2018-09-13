@@ -18,6 +18,14 @@ module RuboCop
             end
           end
 
+          def autocorrect(node)
+            if node.str_type?
+              single_string_correct(node)
+            elsif interpolation_offense?(node)
+              #              interpolation_correct(node)
+            end
+          end
+
           private
 
           def already_decorated?(node, parent = nil)
@@ -33,7 +41,7 @@ module RuboCop
           end
 
           def string_constant?(nodes)
-            nodes[0].type == :const && nodes[1]
+            nodes[0].const_type? && nodes[1]
           end
 
           def contains_string?(nodes)
@@ -51,7 +59,7 @@ module RuboCop
               error_message << 'message should use correctly formatted interpolation. ' if error == :interpolation
               error_message << 'message should be decorated. ' if error == :no_decoration
             end
-            add_offense(message_section, :expression, error_message)
+            add_offense(message_section, message: error_message)
           end
 
           def how_bad_is_it(message_section)
@@ -85,19 +93,11 @@ module RuboCop
           def interpolation_offense?(node, parent = nil)
             parent ||= node
 
-            return true if node.class == RuboCop::AST::Node && node.dstr_type?
+            return true if node.respond_to?(:dstr_type?) && node.dstr_type?
 
             return false unless node.respond_to?(:children)
 
             node.children.any? { |child| interpolation_offense?(child, parent) }
-          end
-
-          def autocorrect(node)
-            if node.str_type?
-              single_string_correct(node)
-            elsif interpolation_offense?(node)
-              #              interpolation_correct(node)
-            end
           end
 
           def single_string_correct(node)
@@ -114,10 +114,10 @@ module RuboCop
               node.children.each do |child|
                 # dstrs are split into "str" segments and other segments.
                 # The "other" segments are the interpolated values.
-                next unless child.type == :begin
+                next unless child.begin_type?
                 value = child.children[0]
                 hash_key = 'value'
-                if value.type == :lvar
+                if value.lvar_type?
                   # Use the variable's name as the format key
                   hash_key = value.loc.name.source
                 else
