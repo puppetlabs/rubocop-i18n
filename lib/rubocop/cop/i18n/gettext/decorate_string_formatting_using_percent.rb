@@ -27,6 +27,7 @@ module RuboCop
           def on_send(node)
             decorator_name = node.loc.selector.source
             return unless GetText.supported_decorator?(decorator_name)
+
             _, method_name, *arg_nodes = *node
             if !arg_nodes.empty? && contains_string_with_percent_format?(arg_nodes)
               message_section = arg_nodes[0]
@@ -54,6 +55,7 @@ module RuboCop
             if node.respond_to?(:children)
               return node.children.any? { |child| contains_string_with_percent_format?(child) }
             end
+
             false
           end
         end

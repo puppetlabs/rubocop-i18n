@@ -79,3 +79,7 @@ Style/IfUnlessModifier:
 # URISchemes: http, https
 Metrics/LineLength:
   Max: 174
+
+Naming/FileName:
+  Exclude:
+    - 'lib/rubocop-i18n.rb'

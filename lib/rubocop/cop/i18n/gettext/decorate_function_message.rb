@@ -6,6 +6,7 @@ module RuboCop
           def on_send(node)
             method_name = node.loc.selector.source
             return unless GetText.supported_method?(method_name)
+
             _, method_name, *arg_nodes = *node
             if !arg_nodes.empty? && !already_decorated?(node) && (contains_string?(arg_nodes) || string_constant?(arg_nodes))
               message_section = if string_constant?(arg_nodes)
@@ -51,6 +52,7 @@ module RuboCop
           def detect_and_report(_node, message_section, method_name)
             errors = how_bad_is_it(message_section)
             return if errors.empty?
+
             error_message = "'#{method_name}' function, "
             errors.each do |error|
               error_message << 'message string should be decorated. ' if error == :simple
@@ -115,6 +117,7 @@ module RuboCop
                 # dstrs are split into "str" segments and other segments.
                 # The "other" segments are the interpolated values.
                 next unless child.begin_type?
+
                 value = child.children[0]
                 hash_key = 'value'
                 if value.lvar_type?
