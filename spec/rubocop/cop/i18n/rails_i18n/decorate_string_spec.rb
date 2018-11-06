@@ -31,7 +31,7 @@ describe RuboCop::Cop::I18n::RailsI18n::DecorateString do
 
   context 'decoration not needed for a hash key' do
     # a string as an hash key is ok
-    it_behaves_like 'a_no_cop_required', 'memo["#{class_path}##{method}-#{source_line}"] += 1'
+    it_behaves_like 'a_no_cop_required', 'memo["#{class_path}##{method}-#{source_line}"] += 1' # rubocop:disable Lint/InterpolationCheck
   end
 
   context 'string with invalid UTF-8' do
@@ -55,8 +55,8 @@ describe RuboCop::Cop::I18n::RailsI18n::DecorateString do
       it_behaves_like 'a_no_cop_required', "#{decorator} \"a string\""
       it_behaves_like 'a_no_cop_required', "a = #{decorator}('a string')"
       it_behaves_like 'a_no_cop_required', "#{decorator}(\"a %-5.2.s thing s string\")"
-      it_behaves_like 'a_no_cop_required', "Log.warning #{decorator}(\"could not change to group %{group}: %{detail}\", group: group, detail: detail)"
-      it_behaves_like 'a_no_cop_required', "Log.warning #{decorator}(\"could not change to group %{group}: %{detail}\",
+      it_behaves_like 'a_no_cop_required', "Log.warning #{decorator}(\"could not change to group %<group>: %<detail>\", group: group, detail: detail)"
+      it_behaves_like 'a_no_cop_required', "Log.warning #{decorator}(\"could not change to group %<group>: %<detail>\",
                                             group: #{decorator}(\"group\"), detail: #{decorator}(\"detail\"))"
     end
 
@@ -72,8 +72,8 @@ describe RuboCop::Cop::I18n::RailsI18n::DecorateString do
       it_behaves_like 'a_no_cop_required', "I18n.#{decorator} \"a string\""
       it_behaves_like 'a_no_cop_required', "a = I18n.#{decorator}('a string')"
       it_behaves_like 'a_no_cop_required', "I18n.#{decorator}(\"a %-5.2.s thing s string\")"
-      it_behaves_like 'a_no_cop_required', "Log.warning I18n.#{decorator}(\"could not change to group %{group}: %{detail}\", group: group, detail: detail)"
-      it_behaves_like 'a_no_cop_required', "Log.warning I18n.#{decorator}(\"could not change to group %{group}: %{detail}\",
+      it_behaves_like 'a_no_cop_required', "Log.warning I18n.#{decorator}(\"could not change to group %<group>: %<detail>\", group: group, detail: detail)"
+      it_behaves_like 'a_no_cop_required', "Log.warning I18n.#{decorator}(\"could not change to group %<group>: %<detail>\",
                                             group: I18n.#{decorator}(\"group\"), detail: I18n.#{decorator}(\"detail\"))"
     end
 
@@ -89,8 +89,8 @@ describe RuboCop::Cop::I18n::RailsI18n::DecorateString do
       it_behaves_like 'a_no_cop_required', "SomeOtherMod.#{decorator} \"a string\""
       it_behaves_like 'a_no_cop_required', "a = SomeOtherMod.#{decorator}('a string')"
       it_behaves_like 'a_no_cop_required', "SomeOtherMod.#{decorator}(\"a %-5.2.s thing s string\")"
-      it_behaves_like 'a_no_cop_required', "Log.warning SomeOtherMod.#{decorator}(\"could not change to group %{group}: %{detail}\", group: group, detail: detail)"
-      it_behaves_like 'a_no_cop_required', "Log.warning SomeOtherMod.#{decorator}(\"could not change to group %{group}: %{detail}\",
+      it_behaves_like 'a_no_cop_required', "Log.warning SomeOtherMod.#{decorator}(\"could not change to group %<group>: %<detail>\", group: group, detail: detail)"
+      it_behaves_like 'a_no_cop_required', "Log.warning SomeOtherMod.#{decorator}(\"could not change to group %<group>: %<detail>\",
                                             group: SomeOtherMod.#{decorator}(\"group\"), detail: SomeOtherMod.#{decorator}(\"detail\"))"
 
       it_behaves_like 'a_detecting_cop', "SomeOtherMod.#{decorator}('Some sentence like text.')", decorator, 'decorator is missing around sentence'
@@ -113,7 +113,7 @@ describe RuboCop::Cop::I18n::RailsI18n::DecorateString do
       RuboCop::Config.new('RailsI18n/DecorateString' => { 'IgnoreExceptions' => true })
     end
 
-    %w(fail raise).each do |type|
+    %w[fail raise].each do |type|
       it_behaves_like 'a_no_cop_required', "#{type} \"A sentence that is not decorated.\""
       it_behaves_like 'a_no_cop_required', "#{type} StandardError, \"A sentence that is not decorated.\""
       it_behaves_like 'a_no_cop_required', "#{type} StandardError.new(\"A sentence that is not decorated.\")"

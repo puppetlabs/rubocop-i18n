@@ -20,7 +20,7 @@ module RuboCop
         #
         #   _("Result is good.")
         class DecorateString < Cop
-          STRING_REGEXP = /^\s*[[:upper:]][[:alpha:]]*[[:blank:]]+.*[.!?]$/
+          STRING_REGEXP = /^\s*[[:upper:]][[:alpha:]]*[[:blank:]]+.*[.!?]$/.freeze
 
           def on_dstr(node)
             check_for_parent_decorator(node) if dstr_contains_sentence?(node)
