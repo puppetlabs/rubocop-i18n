@@ -5,7 +5,7 @@ module RuboCop
     module I18n
       module RailsI18n
         # This cop is looks for strings that appear to be sentences but are not decorated.
-        # Sentences are determined by the STRING_REGEXP. (Upper case character, at least one space,
+        # Sentences are determined by the SENTENCE_REGEXP. (Upper case character, at least one space,
         # and sentence punctuation at the end)
         #
         # @example
@@ -21,8 +21,59 @@ module RuboCop
         #   t("result_is_good")
         #   I18n.t("result_is_good")
         #
+        # There are several options for configuration.
+        #
+        # @example IgnoreExceptions: true
+        #   # OK
+        #
+        #   raise "Some string sentence"
+        #
+        # @example EnforcedSentenceType: sentence
+        #   # bad
+        #
+        #   "Result is bad."
+        #
+        #   # good
+        #
+        #   t("result_is_good")
+        #   I18n.t("result_is_good")
+        #
+        # @example EnforcedSentenceType: fragmented_sentence
+        #   # bad
+        #
+        #   "Result is bad"   # Contains a capital to start
+        #   "result is bad."  # Ends in punctuation
+        #
+        #   # good
+        #
+        #   t("result_is_good")
+        #   I18n.t("result_is_good")
+        #
+        # @example EnforcedSentenceType: fragment
+        #   # bad
+        #
+        #   "result is bad"   # A series of words
+        #
+        #   # good
+        #
+        #   t("result_is_good")
+        #   I18n.t("result_is_good")
+        #
+        # @example Regexp: ^only-this-text$
+        #
+        #   # bad
+        #
+        #   "only-this-text"
+        #
+        #   # good
+        #
+        #   "Any other string is find now"
+        #   t("only_this_text")
+        #
         class DecorateString < Cop
-          STRING_REGEXP = /^\s*[[:upper:]][[:alpha:]]*[[:blank:]]+.*[.!?]$/.freeze
+          SENTENCE_REGEXP = /^\s*[[:upper:]][[:alpha:]]*[[:blank:]]+.*[.!?]$/.freeze
+          FRAGMENTED_SENTENCE_REGEXP = /^\s*([[:upper:]][[:alpha:]]*[[:blank:]]+.*)|([[:alpha:]]*[[:blank:]]+.*[.!?])$/.freeze
+          FRAGMENT_REGEXP = /^\s*[[:alpha:]]*[[:blank:]]+.*$/.freeze
           SUPPORTED_DECORATORS = %w[
             t
             t!
@@ -51,7 +102,7 @@ module RuboCop
             child = node.children[0]
             if child.is_a?(String)
               if child.valid_encoding?
-                child.encode(Encoding::UTF_8).chomp =~ STRING_REGEXP
+                child.encode(Encoding::UTF_8).chomp =~ regexp
               else
                 false
               end
@@ -60,6 +111,24 @@ module RuboCop
             else
               false
             end
+          end
+
+          def regexp
+            @regexp ||= regexp_from_config || regexp_from_string_type
+          end
+
+          def regexp_from_string_type
+            case cop_config['EnforcedSentenceType'].to_s.downcase
+            when 'sentence'            then SENTENCE_REGEXP
+            when 'fragmented_sentence' then FRAGMENTED_SENTENCE_REGEXP
+            when 'fragment'            then FRAGMENT_REGEXP
+            else
+              SENTENCE_REGEXP
+            end
+          end
+
+          def regexp_from_config
+            Regexp.new(cop_config['Regexp']) if cop_config['Regexp']
           end
 
           def dstr_contains_sentence?(node)
