@@ -2,6 +2,11 @@
 
 A set of cops for detecting strings that need i18n decoration in your project.
 
+Supports the following framework styles:
+
+- gettext
+- rails-i18n
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -25,14 +30,28 @@ In your `rubocop.yml`:
 require:
  - rubocop-i18n
 ...
+# You *must* choose GetText or Rails-i18n style checking
+# If you want GetText-style checking
+GetText:
+  Enabled: true
+RailsI18n:
+  Enabled: false
+# If you want rails-i18n-style checking
+RailsI18n:
+  Enabled: true
+GetText:
+  Enabled: false
+# If you want custom control of all the cops
 GetText/DecorateString:
-  Enabled: true
+  Enabled: false
 GetText/DecorateFunctionMessage:
-  Enabled: true
-GetText/DecorateStringFormattingUsingInterpolation
-  Enabled: true
-GetText/DecorateStringFormattingUsingPercent
-  Enabled: true
+  Enabled: false
+GetText/DecorateStringFormattingUsingInterpolation:
+  Enabled: false
+GetText/DecorateStringFormattingUsingPercent:
+  Enabled: false
+RailsI18n/DecorateString:
+  Enabled: false
 ```
 
 ## Cops
@@ -233,11 +252,36 @@ raise(_("Warning is %s") % ['bad'])
 raise(_("Warning is %{value}") % { value: 'bad' })
 ```
 
+### RailsI18n/DecorateString
+
+This cop looks for decorated rails-i18n methods.
+
+##### Error message thrown
+
+```
+decorator is missing around sentence
+```
+
+##### Bad
+
+``` ruby
+raise("Warning is %s" % ['bad'])
+```
+
+##### Good
+
+``` ruby
+raise(t("Warning is %{value}") % { value: 'good' })
+raise(translate("Warning is %{value}") % { value: 'good' })
+raise(I18n.t("Warning is %{value}") % { value: 'good' })
+```
+
 ## How to ignore rules in code
 
 It may be necessary to ignore a cop for a particular piece of code. We follow standard rubocop idioms.
 ``` ruby
 raise("We don't want this translated.")                 # rubocop:disable GetText/DecorateString
+raise("We don't want this translated.")                 # rubocop:disable RailsI18n/DecorateString
 raise("We don't want this translated")                  # rubocop:disable GetText/DecorateFunctionMessage
 raise(_("We don't want this translated #{crazy}")       # rubocop:disable GetText/DecorateStringFormattingUsingInterpolation)
 raise(_("We don't want this translated %s") % ['crazy'] # rubocop:disable GetText/DecorateStringFormattingUsingPercent)
