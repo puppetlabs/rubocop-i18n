@@ -49,7 +49,7 @@ describe RuboCop::Cop::I18n::RailsI18n::DecorateString do
         A sentence line two.\"", 't', 'decorator is missing around sentence'
   end
 
-  RuboCop::Cop::I18n::RailsI18n::DecorateString::SUPPORTED_DECORATORS.each do |decorator|
+  RuboCop::Cop::I18n::RailsI18n.supported_decorators.each do |decorator|
     context "#{decorator} already present" do
       it_behaves_like 'a_no_cop_required', "#{decorator}('a string')"
       it_behaves_like 'a_no_cop_required', "#{decorator} \"a string\""

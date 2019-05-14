@@ -7,3 +7,4 @@ require 'rubocop/cop/i18n/gettext/decorate_string_formatting_using_percent'
 
 require 'rubocop/cop/i18n/rails_i18n'
 require 'rubocop/cop/i18n/rails_i18n/decorate_string'
+require 'rubocop/cop/i18n/rails_i18n/decorate_string_formatting_using_interpolation'
