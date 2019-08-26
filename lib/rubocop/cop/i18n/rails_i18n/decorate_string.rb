@@ -67,7 +67,7 @@ module RuboCop
         #
         #   # good
         #
-        #   "Any other string is find now"
+        #   "Any other string is fine now"
         #   t("only_this_text")
         #
         class DecorateString < Cop
