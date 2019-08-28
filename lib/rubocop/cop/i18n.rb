@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rubocop'
 require 'rubocop/cop/i18n/gettext'
 require 'rubocop/cop/i18n/gettext/decorate_string'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RuboCop
   module Cop
     module I18n
@@ -28,7 +30,8 @@ module RuboCop
             decorator_name = node.loc.selector.source
             return unless GetText.supported_decorator?(decorator_name)
 
-            _, method_name, *arg_nodes = *node
+            method_name = node.method_name
+            arg_nodes = node.arguments
             if !arg_nodes.empty? && contains_string_with_percent_format?(arg_nodes)
               message_section = arg_nodes[0]
               add_offense(message_section, message: "'#{method_name}' function, message string should not contain sprintf style formatting (ie %s)")
