@@ -1,7 +1,4 @@
 language: ruby
-matrix:
-  fast_finish: true
-  include:
-    - rvm: 2.4.1
+fast_finish: true
 notifications:
-  email: false
+  email: true

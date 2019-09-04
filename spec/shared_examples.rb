@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+require 'rubocop/rspec/support'
+
 shared_examples 'accepts' do |code|
   let(:source) { code }
 
