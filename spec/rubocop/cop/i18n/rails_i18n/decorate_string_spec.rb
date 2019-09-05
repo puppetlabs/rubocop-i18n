@@ -119,4 +119,49 @@ describe RuboCop::Cop::I18n::RailsI18n::DecorateString do
       it_behaves_like 'a_no_cop_required', "#{type} StandardError.new(\"A sentence that is not decorated.\")"
     end
   end
+
+  context 'when configuring a different regex' do
+    let(:config) do
+      RuboCop::Config.new('RailsI18n/DecorateString' => { 'Regexp' => '^test-test-test$' })
+    end
+
+    it_behaves_like 'a_no_cop_required', "not_t('A sentence.')"
+    it_behaves_like 'a_detecting_cop', "not_t('test-test-test')", 't', 'decorator is missing around sentence'
+  end
+
+  context 'when string type' do
+    let(:config) do
+      RuboCop::Config.new('RailsI18n/DecorateString' => { 'EnforcedSentenceType' => type })
+    end
+
+    context 'is sentence' do
+      let(:type) { 'sentence' }
+
+      it_behaves_like 'a_no_cop_required', "not_t('word')"
+      it_behaves_like 'a_no_cop_required', "not_t('a fragment')"
+      it_behaves_like 'a_no_cop_required', "not_t('A sentence fragment')"
+      it_behaves_like 'a_no_cop_required', "not_t('a sentence fragment.')"
+      it_behaves_like 'a_detecting_cop', "not_t('A real sentence.')", 't', 'decorator is missing around sentence'
+    end
+
+    context 'is fragmented sentence' do
+      let(:type) { 'fragmented_sentence' }
+
+      it_behaves_like 'a_no_cop_required', "not_t('word')"
+      it_behaves_like 'a_no_cop_required', "not_t('a fragment')"
+      it_behaves_like 'a_detecting_cop', "not_t('A sentence fragment')", 't', 'decorator is missing around sentence'
+      it_behaves_like 'a_detecting_cop', "not_t('a sentence fragment.')", 't', 'decorator is missing around sentence'
+      it_behaves_like 'a_detecting_cop', "not_t('A real sentence.')", 't', 'decorator is missing around sentence'
+    end
+
+    context 'is fragment' do
+      let(:type) { 'fragment' }
+
+      it_behaves_like 'a_no_cop_required', "not_t('word')"
+      it_behaves_like 'a_detecting_cop', "not_t('a fragment')", 't', 'decorator is missing around sentence'
+      it_behaves_like 'a_detecting_cop', "not_t('A sentence fragment')", 't', 'decorator is missing around sentence'
+      it_behaves_like 'a_detecting_cop', "not_t('a sentence fragment.')", 't', 'decorator is missing around sentence'
+      it_behaves_like 'a_detecting_cop', "not_t('A real sentence.')", 't', 'decorator is missing around sentence'
+    end
+  end
 end
