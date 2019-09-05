@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RuboCop
   module Cop
     module I18n
@@ -7,7 +9,8 @@ module RuboCop
             method_name = node.loc.selector.source
             return unless GetText.supported_method?(method_name)
 
-            _, method_name, *arg_nodes = *node
+            method_name = node.method_name
+            arg_nodes = node.arguments
             if !arg_nodes.empty? && !already_decorated?(node) && (contains_string?(arg_nodes) || string_constant?(arg_nodes))
               message_section = if string_constant?(arg_nodes)
                                   arg_nodes[1]
@@ -53,7 +56,7 @@ module RuboCop
             errors = how_bad_is_it(message_section)
             return if errors.empty?
 
-            error_message = "'#{method_name}' function, "
+            error_message = ["'#{method_name}' function, "]
             errors.each do |error|
               error_message << 'message string should be decorated. ' if error == :simple
               error_message << 'message should not be a concatenated string. ' if error == :concatenation
@@ -61,6 +64,7 @@ module RuboCop
               error_message << 'message should use correctly formatted interpolation. ' if error == :interpolation
               error_message << 'message should be decorated. ' if error == :no_decoration
             end
+            error_message = error_message.join('\n')
             add_offense(message_section, message: error_message)
           end
 
