@@ -278,6 +278,33 @@ raise(translate("Warning is %{value}") % { value: 'good' })
 raise(I18n.t("Warning is %{value}") % { value: 'good' })
 ```
 
+### RailsI18n/DecorateStringFormattingUsingInterpolation
+
+This cop looks for decorated rails-i18n methods like `t()` and `translate()` and checks that all strings contained
+within do not use string interpolation '#{}'
+
+#### Simple decoration of a message
+
+Simple message strings should be decorated with the t() function
+
+##### Error message thrown
+
+```
+'t' function, message key string should not contain #{} formatting
+```
+
+##### Bad
+
+``` ruby
+puts t("path.to.key.with.#{'interpolation'}")
+```
+
+##### Good
+
+``` ruby
+puts t("path.to.key.with.interpolation")
+```
+
 ## How to ignore rules in code
 
 It may be necessary to ignore a cop for a particular piece of code. We follow standard rubocop idioms.

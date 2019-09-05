@@ -9,7 +9,6 @@
 # Offense count: 6
 Lint/InterpolationCheck:
   Exclude:
-    - 'spec/rubocop/cop/i18n/gettext/decorate_string_formatting_using_interpolation_spec.rb'
     - 'spec/rubocop/cop/i18n/gettext/decorate_string_spec.rb'
 
 # Offense count: 4
@@ -49,13 +48,14 @@ Style/Documentation:
     - 'lib/rubocop/cop/i18n/gettext.rb'
     - 'lib/rubocop/cop/i18n/gettext/decorate_function_message.rb'
 
-# Offense count: 11
+# Offense count: 12
 # Configuration parameters: EnforcedStyle.
 # SupportedStyles: annotated, template, unannotated
 Style/FormatStringToken:
   Exclude:
     - 'spec/rubocop/cop/i18n/gettext/decorate_function_message_spec.rb'
     - 'spec/rubocop/cop/i18n/gettext/decorate_string_formatting_using_interpolation_spec.rb'
+    - 'spec/rubocop/cop/i18n/rails_i18n/decorate_string_formatting_using_interpolation_spec.rb'
     - 'spec/rubocop/cop/i18n/gettext/decorate_string_formatting_using_percent_spec.rb'
     - 'spec/rubocop/cop/i18n/gettext/decorate_string_spec.rb'
 
@@ -64,7 +64,6 @@ Style/FormatStringToken:
 Style/GuardClause:
   Exclude:
     - 'lib/rubocop/cop/i18n/gettext/decorate_function_message.rb'
-    - 'lib/rubocop/cop/i18n/gettext/decorate_string_formatting_using_interpolation.rb'
     - 'lib/rubocop/cop/i18n/gettext/decorate_string_formatting_using_percent.rb'
 
 # Offense count: 10
@@ -72,7 +71,6 @@ Style/GuardClause:
 Style/IfUnlessModifier:
   Exclude:
     - 'lib/rubocop/cop/i18n/gettext/decorate_function_message.rb'
-    - 'lib/rubocop/cop/i18n/gettext/decorate_string_formatting_using_interpolation.rb'
     - 'lib/rubocop/cop/i18n/gettext/decorate_string_formatting_using_percent.rb'
     - 'lib/rubocop/rspec/cop_helper.rb'
 

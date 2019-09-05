@@ -161,17 +161,13 @@ module RuboCop
           def parent_is_translator?(parent)
             if parent.respond_to?(:type) && parent.send_type?
               method_name = parent.loc.selector.source
-              if supported_decorator?(method_name)
+              if RailsI18n.supported_decorator?(method_name)
                 # Implicit receiver is assumed correct.
                 return true if parent.receiver.nil?
                 return true if parent.receiver.children == [nil, :I18n]
               end
             end
             false
-          end
-
-          def supported_decorator?(decorator_name)
-            SUPPORTED_DECORATORS.include?(decorator_name)
           end
         end
       end
