@@ -10,7 +10,7 @@ describe RuboCop::Cop::I18n::RailsI18n::DecorateStringFormattingUsingInterpolati
   end
 
   RuboCop::Cop::I18n::RailsI18n.supported_decorators.each do |decorator|
-    error_message = 'function, message key string should not contain #{} formatting'
+    error_message = "function, message key string should not contain \#{} formatting"
 
     context "#{decorator} decoration not used" do
       it_behaves_like 'a_no_cop_required', 'thing("a \#{true} that is not decorated")'

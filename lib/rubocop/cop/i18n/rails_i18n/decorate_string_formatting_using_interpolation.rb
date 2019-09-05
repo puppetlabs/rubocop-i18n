@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RuboCop
   module Cop
     module I18n
@@ -20,15 +22,17 @@ module RuboCop
         #
         class DecorateStringFormattingUsingInterpolation < Cop
           def on_send(node)
-            return unless node.loc && node.loc.selector
+            return unless node&.loc&.selector
+
             decorator_name = node.loc.selector.source
             return unless RailsI18n.supported_decorator?(decorator_name)
 
-            _, method_name, *arg_nodes = *node
-            if !arg_nodes.empty? && contains_string_formatting_with_interpolation?(arg_nodes)
-              message_section = arg_nodes[0]
-              add_offense(message_section, message: error_message(method_name))
-            end
+            method_name = node.method_name
+            arg_nodes = node.arguments
+            return unless !arg_nodes.empty? && contains_string_formatting_with_interpolation?(arg_nodes)
+
+            message_section = arg_nodes[0]
+            add_offense(message_section, message: error_message(method_name))
           end
 
           private
@@ -42,19 +46,11 @@ module RuboCop
           end
 
           def contains_string_formatting_with_interpolation?(node)
-            if node.is_a?(Array)
-              return node.any? { |n| contains_string_formatting_with_interpolation?(n) }
-            end
+            return node.any? { |n| contains_string_formatting_with_interpolation?(n) } if node.is_a?(Array)
 
-            if node.respond_to?(:type)
-              if node.str_type? || node.dstr_type?
-                return string_contains_interpolation_format?(node.source)
-              end
-            end
+            return string_contains_interpolation_format?(node.source) if node.respond_to?(:type) && (node.str_type? || node.dstr_type?)
 
-            if node.respond_to?(:children)
-              return node.children.any? { |child| contains_string_formatting_with_interpolation?(child) }
-            end
+            return node.children.any? { |child| contains_string_formatting_with_interpolation?(child) } if node.respond_to?(:children)
 
             false
           end
