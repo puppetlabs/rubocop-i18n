@@ -12,6 +12,7 @@ describe RuboCop::Cop::I18n::GetText::DecorateString do
   context 'decoration needed for string' do
     it_behaves_like 'a_detecting_cop', 'a = "A sentence that is not decorated."', '_', 'decorator is missing around sentence'
     it_behaves_like 'a_detecting_cop', 'thing("A sentence that is not decorated.")', '_', 'decorator is missing around sentence'
+    it_behaves_like 'a_fixing_cop', 'thing("A sentence that is not decorated.")', 'thing(_("A sentence that is not decorated."))', 'thing'
   end
 
   context 'decoration not needed for string' do

@@ -37,6 +37,10 @@ module RuboCop
             check_for_parent_decorator(node)
           end
 
+          def autocorrect(node)
+            single_string_correct(node) if node.str_type?
+          end
+
           private
 
           def sentence?(node)
@@ -67,6 +71,13 @@ module RuboCop
               return
             end
             add_offense(node, message: 'decorator is missing around sentence')
+          end
+
+          def single_string_correct(node)
+            lambda { |corrector|
+              corrector.insert_before(node.source_range, '_(')
+              corrector.insert_after(node.source_range, ')')
+            }
           end
         end
       end
