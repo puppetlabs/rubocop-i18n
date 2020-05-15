@@ -63,7 +63,7 @@ module RuboCop
             if parent.respond_to?(:type) && parent.send_type?
               method_name = parent.loc.selector.source
               return if GetText.supported_decorator?(method_name)
-            elsif parent.respond_to?(:method_name) && parent.method_name == :[]
+            elsif parent.respond_to?(:method_name) && parent.method?(:[])
               return
             end
             add_offense(node, message: 'decorator is missing around sentence')
