@@ -149,13 +149,13 @@ module RuboCop
             return true if parent.respond_to?(:method_name) && %i[raise fail].include?(parent.method_name)
 
             # Commonly exceptions are initialized manually.
-            return ignoring_raised_parent?(parent.parent) if parent.respond_to?(:method_name) && parent.method_name == :new
+            return ignoring_raised_parent?(parent.parent) if parent.respond_to?(:method_name) && parent.method?(:new)
 
             false
           end
 
           def parent_is_indexer?(parent)
-            parent.respond_to?(:method_name) && parent.method_name == :[]
+            parent.respond_to?(:method_name) && parent.method?(:[])
           end
 
           def parent_is_translator?(parent)
