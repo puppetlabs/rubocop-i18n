@@ -46,6 +46,8 @@ GetText:
 # If you want custom control of all the cops
 GetText/DecorateString:
   Enabled: false
+  # Disable the autocorrect
+  AutoCorrect: false
 GetText/DecorateFunctionMessage:
   Enabled: false
 GetText/DecorateStringFormattingUsingInterpolation:
