@@ -1,8 +1,19 @@
 # Change Log
 
-### master (Unreleased)
+### [master (Unreleased)](https://github.com/puppetlabs/rubocop-i18n/compare/v2.0.2...master)
 
-* None
+### [2.0.2](https://github.com/puppetlabs/rubocop-i18n/compare/v2.0.1...v2.0.2)
+
+* Add auto-correct for `DecorateString` (#40) Thanks @mvz!
+* Update rake and bundler requirements to be more permissive of newer versions (#43)
+
+### 2.0.1
+
+* `chmod` all the files to be world readable and ensured that `gem
+build` doesn't emit any warnings.
+* fixes license name
+* specifies version for pry and rb-readline
+* bump Z version
 
 ### 2.0.0
 
