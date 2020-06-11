@@ -1,4 +1,11 @@
+---
+os: linux
+dist: xenial
 language: ruby
-fast_finish: true
+rvm:
+  - 2.5
+  - 2.7
+jobs:
+  fast_finish: true
 notifications:
   email: true
