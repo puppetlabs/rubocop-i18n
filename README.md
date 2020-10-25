@@ -34,33 +34,33 @@ require:
 ...
 # You *must* choose GetText or Rails-i18n style checking
 # If you want GetText-style checking
-GetText:
+I18n/GetText:
   Enabled: true
-RailsI18n:
+I18n/RailsI18n:
   Enabled: false
 # If you want rails-i18n-style checking
-RailsI18n:
+I18n/RailsI18n:
   Enabled: true
-GetText:
+I18n/GetText:
   Enabled: false
 # If you want custom control of all the cops
-GetText/DecorateString:
+I18n/GetText/DecorateString:
   Enabled: false
   # Disable the autocorrect
   AutoCorrect: false
-GetText/DecorateFunctionMessage:
+I18n/GetText/DecorateFunctionMessage:
   Enabled: false
-GetText/DecorateStringFormattingUsingInterpolation:
+I18n/GetText/DecorateStringFormattingUsingInterpolation:
   Enabled: false
-GetText/DecorateStringFormattingUsingPercent:
+I18n/GetText/DecorateStringFormattingUsingPercent:
   Enabled: false
-RailsI18n/DecorateString:
+I18n/RailsI18n/DecorateString:
   Enabled: false
 ```
 
 ## Cops
 
-### GetText/DecorateString
+### I18n/GetText/DecorateString
 
 This cop is looks for strings that appear to be sentences but are not decorated. 
 Sentences are determined by the STRING_REGEXP.
@@ -90,7 +90,7 @@ _("Result is good.")
 "a string that doesn't start with a capital letter."
 ```
 
-### GetText/DecorateFunctionMessage
+### I18n/GetText/DecorateFunctionMessage
 
 This cop looks for any raise or fail functions and checks that the user visible message is using gettext decoration with the _() function.
 This cop makes sure the message is decorated, as well as checking that the formatting of the message is compliant according to the follow rules.
@@ -206,7 +206,7 @@ raise(someOtherFuntioncall(foo, "bar"))
 In this raise or fail function, the message does not contain any decoration at all and the message is not a simple string. It may make sense to convert the message to a simple string. eg [Simple decoration of a message](#Simple-decoration-of-a-message). 
 Or ignore this raise or fail function following this [How to ignore rules in code](#How-to-ignore-rules-in-code) section.
 
-### GetText/DecorateStringFormattingUsingInterpolation
+### I18n/GetText/DecorateStringFormattingUsingInterpolation
 
 This cop looks for decorated gettext methods _() and checks that all strings contained
 within do not use string interpolation '#{}'
@@ -233,7 +233,7 @@ puts _("a message with a #{'interpolation'}")
 puts _("a message that is %{type}") % { type: 'translatable' }
 ```
 
-### GetText/DecorateStringFormattingUsingPercent
+### I18n/GetText/DecorateStringFormattingUsingPercent
 
 This cop looks for decorated gettext methods _() and checks that all strings contained
 within do not use sprintf formatting '%s' etc
@@ -256,7 +256,7 @@ raise(_("Warning is %s") % ['bad'])
 raise(_("Warning is %{value}") % { value: 'bad' })
 ```
 
-### RailsI18n/DecorateString
+### I18n/RailsI18n/DecorateString
 
 This cop looks for decorated rails-i18n methods.
 
@@ -280,7 +280,7 @@ raise(translate("Warning is %{value}") % { value: 'good' })
 raise(I18n.t("Warning is %{value}") % { value: 'good' })
 ```
 
-### RailsI18n/DecorateStringFormattingUsingInterpolation
+### I18n/RailsI18n/DecorateStringFormattingUsingInterpolation
 
 This cop looks for decorated rails-i18n methods like `t()` and `translate()` and checks that all strings contained
 within do not use string interpolation '#{}'
@@ -311,11 +311,11 @@ puts t("path.to.key.with.interpolation")
 
 It may be necessary to ignore a cop for a particular piece of code. We follow standard rubocop idioms.
 ``` ruby
-raise("We don't want this translated.")                 # rubocop:disable GetText/DecorateString
-raise("We don't want this translated.")                 # rubocop:disable RailsI18n/DecorateString
-raise("We don't want this translated")                  # rubocop:disable GetText/DecorateFunctionMessage
-raise(_("We don't want this translated #{crazy}")       # rubocop:disable GetText/DecorateStringFormattingUsingInterpolation)
-raise(_("We don't want this translated %s") % ['crazy'] # rubocop:disable GetText/DecorateStringFormattingUsingPercent)
+raise("We don't want this translated.")                 # rubocop:disable I18n/GetText/DecorateString
+raise("We don't want this translated.")                 # rubocop:disable I18n/RailsI18n/DecorateString
+raise("We don't want this translated")                  # rubocop:disable I18n/GetText/DecorateFunctionMessage
+raise(_("We don't want this translated #{crazy}")       # rubocop:disable I18n/GetText/DecorateStringFormattingUsingInterpolation)
+raise(_("We don't want this translated %s") % ['crazy'] # rubocop:disable I18n/GetText/DecorateStringFormattingUsingPercent)
 ```
 
 ## Known Issues
