@@ -110,7 +110,7 @@ describe RuboCop::Cop::I18n::RailsI18n::DecorateString do
 
   context 'when ignoring raised exceptions' do
     let(:config) do
-      RuboCop::Config.new('RailsI18n/DecorateString' => { 'IgnoreExceptions' => true })
+      RuboCop::Config.new('I18n/RailsI18n/DecorateString' => { 'IgnoreExceptions' => true })
     end
 
     %w[fail raise].each do |type|
@@ -122,7 +122,7 @@ describe RuboCop::Cop::I18n::RailsI18n::DecorateString do
 
   context 'when configuring a different regex' do
     let(:config) do
-      RuboCop::Config.new('RailsI18n/DecorateString' => { 'Regexp' => '^test-test-test$' })
+      RuboCop::Config.new('I18n/RailsI18n/DecorateString' => { 'Regexp' => '^test-test-test$' })
     end
 
     it_behaves_like 'a_no_cop_required', "not_t('A sentence.')"
@@ -131,7 +131,7 @@ describe RuboCop::Cop::I18n::RailsI18n::DecorateString do
 
   context 'when string type' do
     let(:config) do
-      RuboCop::Config.new('RailsI18n/DecorateString' => { 'EnforcedSentenceType' => type })
+      RuboCop::Config.new('I18n/RailsI18n/DecorateString' => { 'EnforcedSentenceType' => type })
     end
 
     context 'is sentence' do
