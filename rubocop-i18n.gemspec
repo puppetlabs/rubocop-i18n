@@ -26,5 +26,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '>= 12.3.3'
   spec.add_development_dependency 'rb-readline', '~> 0.5.5'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_runtime_dependency 'rubocop', '~> 0.51'
+  spec.add_runtime_dependency 'rubocop', '~> 1.0'
 end
