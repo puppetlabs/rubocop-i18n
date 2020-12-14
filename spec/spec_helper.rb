@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
-require 'bundler/setup'
-require 'shared_functions'
-require 'shared_examples'
 require 'rubocop/cop/i18n'
 require 'rubocop/rspec/cop_helper'
+require 'shared_examples'
+require 'shared_functions'
 
 RSpec.configure do |config|
   # These two settings work together to allow you to limit a spec run

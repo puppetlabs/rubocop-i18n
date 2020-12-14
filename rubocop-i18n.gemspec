@@ -2,7 +2,6 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-rubocop_version = '~> 0.51'
 
 Gem::Specification.new do |spec|
   spec.name          = 'rubocop-i18n'
@@ -27,6 +26,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '>= 12.3.3'
   spec.add_development_dependency 'rb-readline', '~> 0.5.5'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rubocop', rubocop_version
-  spec.add_runtime_dependency 'rubocop', rubocop_version
+  spec.add_runtime_dependency 'rubocop', '~> 1.0'
 end
