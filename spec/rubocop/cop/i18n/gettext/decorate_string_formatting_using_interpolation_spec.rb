@@ -2,9 +2,7 @@
 
 require 'spec_helper'
 
-describe RuboCop::Cop::I18n::GetText::DecorateStringFormattingUsingInterpolation do
-  let(:config) { RuboCop::Config.new }
-  subject(:cop) { described_class.new(config) }
+describe RuboCop::Cop::I18n::GetText::DecorateStringFormattingUsingInterpolation, :config, :config do
   before(:each) do
     investigate(cop, source)
   end
