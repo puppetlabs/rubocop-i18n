@@ -122,7 +122,7 @@ module RuboCop
             when 'sentence'            then SENTENCE_REGEXP
             when 'fragmented_sentence' then FRAGMENTED_SENTENCE_REGEXP
             when 'fragment'            then FRAGMENT_REGEXP
-            else
+            else # rubocop:disable Lint/DuplicateBranch
               SENTENCE_REGEXP
             end
           end
