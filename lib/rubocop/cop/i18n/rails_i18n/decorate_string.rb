@@ -28,6 +28,11 @@ module RuboCop
         #
         #   raise "Some string sentence"
         #
+        # @example IgnoreLogger: true
+        #   # OK
+        #
+        #   logger.info("Some string sentence")
+        #
         # @example EnforcedSentenceType: sentence
         #   # bad
         #
@@ -139,6 +144,7 @@ module RuboCop
             return if parent_is_translator?(node.parent)
             return if parent_is_indexer?(node.parent)
             return if ignoring_raised_parent?(node.parent)
+            return if ignoring_logger?(node.parent)
 
             add_offense(node, message: 'decorator is missing around sentence')
           end
@@ -150,6 +156,14 @@ module RuboCop
 
             # Commonly exceptions are initialized manually.
             return ignoring_raised_parent?(parent.parent) if parent.respond_to?(:method_name) && parent.method?(:new)
+
+            false
+          end
+
+          def ignoring_logger?(parent)
+            return false unless cop_config['IgnoreLogger']
+
+            return true if parent.respond_to?(:method_name) && %i[debug info warn error].include?(parent.method_name)
 
             false
           end

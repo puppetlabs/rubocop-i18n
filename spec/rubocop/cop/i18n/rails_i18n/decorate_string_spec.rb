@@ -118,6 +118,16 @@ describe RuboCop::Cop::I18n::RailsI18n::DecorateString, :config, :config do
     end
   end
 
+  context 'when ignoring logger' do
+    let(:config) do
+      RuboCop::Config.new('I18n/RailsI18n/DecorateString' => { 'IgnoreLogger' => true })
+    end
+
+    %w[debug info warn error].each do |type|
+      it_behaves_like 'a_no_cop_required', "#{type} \"A sentence that is not decorated.\""
+    end
+  end
+
   context 'when configuring a different regex' do
     let(:config) do
       RuboCop::Config.new('I18n/RailsI18n/DecorateString' => { 'Regexp' => '^test-test-test$' })
