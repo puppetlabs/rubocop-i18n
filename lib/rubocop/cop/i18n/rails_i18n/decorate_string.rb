@@ -70,7 +70,7 @@ module RuboCop
         #   "Any other string is fine now"
         #   t("only_this_text")
         #
-        class DecorateString < Cop
+        class DecorateString < Base
           SENTENCE_REGEXP = /^\s*[[:upper:]][[:alpha:]]*[[:blank:]]+.*[.!?]$/.freeze
           FRAGMENTED_SENTENCE_REGEXP = /^\s*([[:upper:]][[:alpha:]]*[[:blank:]]+.*)|([[:alpha:]]*[[:blank:]]+.*[.!?])$/.freeze
           FRAGMENT_REGEXP = /^\s*[[:alpha:]]*[[:blank:]]+.*$/.freeze

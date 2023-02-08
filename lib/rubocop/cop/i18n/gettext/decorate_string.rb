@@ -19,7 +19,9 @@ module RuboCop
         #   # good
         #
         #   _("Result is good.")
-        class DecorateString < Cop
+        class DecorateString < Base
+          extend AutoCorrector
+
           STRING_REGEXP = /^\s*[[:upper:]][[:alpha:]]*[[:blank:]]+.*[.!?]$/.freeze
 
           def on_dstr(node)
@@ -35,10 +37,6 @@ module RuboCop
             end
 
             check_for_parent_decorator(node)
-          end
-
-          def autocorrect(node)
-            single_string_correct(node) if node.str_type?
           end
 
           private
@@ -70,14 +68,13 @@ module RuboCop
             elsif parent.respond_to?(:method_name) && parent.method?(:[])
               return
             end
-            add_offense(node, message: 'decorator is missing around sentence')
+            add_offense(node, message: 'decorator is missing around sentence') do |corrector|
+              single_string_correct(corrector, node) if node.str_type?
+            end
           end
 
-          def single_string_correct(node)
-            lambda { |corrector|
-              corrector.insert_before(node.source_range, '_(')
-              corrector.insert_after(node.source_range, ')')
-            }
+          def single_string_correct(corrector, node)
+            corrector.wrap(node.source_range, '_(', ')')
           end
         end
       end

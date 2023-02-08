@@ -2,9 +2,9 @@
 
 require 'spec_helper'
 
-describe RuboCop::Cop::I18n::GetText::DecorateStringFormattingUsingInterpolation, :config, :config do
+describe RuboCop::Cop::I18n::GetText::DecorateStringFormattingUsingInterpolation, :config do
   before(:each) do
-    investigate(cop, source)
+    @offenses = investigate(cop, source)
   end
 
   RuboCop::Cop::I18n::GetText.supported_decorators.each do |decorator|

@@ -6,27 +6,26 @@ shared_examples 'accepts' do |code|
   let(:source) { code }
 
   it 'does not register an offense' do
-    investigate(cop, source)
-    expect(cop.offenses).to be_empty
+    expect(@offenses).to be_empty
   end
 end
 
 shared_examples 'a_detecting_cop' do |unfixed, _function, expected_warning|
   let(:source) { unfixed.to_s }
   it 'has the correct rubocop warning' do
-    expect(cop.offenses[0]).not_to be_nil
-    expect(cop.offenses[0].message).to include(expected_warning)
+    expect(@offenses[0]).not_to be_nil
+    expect(@offenses[0].message).to include(expected_warning)
   end
 
   it 'has the correct number of offenses' do
-    expect(cop.offenses.size).to eq(1)
+    expect(@offenses.size).to eq(1)
   end
 end
 
 shared_examples 'a_no_cop_required' do |fixed, _function|
   let(:source) { fixed.to_s }
   it 'has no offenses found' do
-    expect(cop.offenses).to be_empty
+    expect(@offenses).to be_empty
   end
 end
 
