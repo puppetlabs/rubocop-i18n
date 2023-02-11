@@ -4,7 +4,9 @@ module RuboCop
   module Cop
     module I18n
       module GetText
-        class DecorateFunctionMessage < Cop
+        class DecorateFunctionMessage < Base
+          extend AutoCorrector
+
           def on_send(node)
             method_name = node.loc.selector.source
             return unless GetText.supported_method?(method_name)
@@ -19,14 +21,6 @@ module RuboCop
                                 end
 
               detect_and_report(node, message_section, method_name)
-            end
-          end
-
-          def autocorrect(node)
-            if node.str_type?
-              single_string_correct(node)
-            elsif interpolation_offense?(node)
-              #              interpolation_correct(node)
             end
           end
 
@@ -65,7 +59,17 @@ module RuboCop
               error_message << 'message should be decorated. ' if error == :no_decoration
             end
             error_message = error_message.join('\n')
-            add_offense(message_section, message: error_message)
+            add_offense(message_section, message: error_message) do |corrector|
+              autocorrect(corrector, message_section)
+            end
+          end
+
+          def autocorrect(corrector, node)
+            if node.str_type?
+              single_string_correct(corrector, node)
+            elsif interpolation_offense?(node)
+              #              interpolation_correct(node)
+            end
           end
 
           def how_bad_is_it(message_section)
@@ -106,11 +110,8 @@ module RuboCop
             node.children.any? { |child| interpolation_offense?(child, parent) }
           end
 
-          def single_string_correct(node)
-            lambda { |corrector|
-              corrector.insert_before(node.source_range, '_(')
-              corrector.insert_after(node.source_range, ')')
-            }
+          def single_string_correct(corrector, node)
+            corrector.wrap(node.source_range, '_(', ')')
           end
 
           def interpolation_correct(node)

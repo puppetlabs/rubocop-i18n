@@ -23,6 +23,10 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 2.5.8'
 
+  spec.metadata = {
+    'rubygems_mfa_required' => 'true'
+  }
+
   spec.add_development_dependency 'bundler', '>= 1.17.3'
   spec.add_development_dependency 'pry', '~> 0.13.1'
   spec.add_development_dependency 'rake', '>= 12.3.3'

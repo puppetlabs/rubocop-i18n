@@ -6,6 +6,10 @@ AllCops:
   TargetRubyVersion: 2.5
   NewCops: enable
 
+# rubocop-i18n does not have config/default.
+InternalAffairs/UndefinedConfig:
+  Enabled: false
+
 Metrics/BlockLength:
   Exclude:
     # Exclude the spec directory because the rspec DSL results in long blocks

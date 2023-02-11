@@ -20,7 +20,7 @@ module RuboCop
         #
         #   t("status.accepted")
         #
-        class DecorateStringFormattingUsingInterpolation < Cop
+        class DecorateStringFormattingUsingInterpolation < Base
           def on_send(node)
             return unless node&.loc&.selector
 

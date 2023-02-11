@@ -23,7 +23,7 @@ module RuboCop
         #
         #   _("result is %{detail}" % {detail: message})
         #
-        class DecorateStringFormattingUsingPercent < Cop
+        class DecorateStringFormattingUsingPercent < Base
           SUPPORTED_FORMATS = %w[b B d i o u x X e E f g G a A c p s].freeze
 
           def on_send(node)

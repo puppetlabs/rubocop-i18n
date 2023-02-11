@@ -10,7 +10,7 @@ RSpec.configure do |config|
   # to individual examples or groups you care about by tagging them with
   # `:focus` metadata. When nothing is tagged with `:focus`, all examples
   # get run.
-  unless defined?(::TestQueue)
+  unless defined?(TestQueue)
     # See. https://github.com/tmm1/test-queue/issues/60#issuecomment-281948929
     config.filter_run :focus
     config.run_all_when_everything_filtered = true
@@ -22,7 +22,7 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 
   broken_filter = lambda do |v|
-    v.is_a?(Symbol) ? RUBY_ENGINE == v.to_s : v
+    v.is_a?(Symbol) ? v.to_s == RUBY_ENGINE : v
   end
   config.filter_run_excluding broken: broken_filter
 
