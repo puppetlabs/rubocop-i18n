@@ -2,9 +2,9 @@
 
 require 'spec_helper'
 
-describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage, :config, :config do
+describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage, :config do
   before(:each) do
-    investigate(cop, source)
+    @offenses = investigate(cop, source)
   end
 
   RuboCop::Cop::I18n::GetText.supported_methods.each do |function|
@@ -52,13 +52,13 @@ describe RuboCop::Cop::I18n::GetText::DecorateFunctionMessage, :config, :config 
       let(:source) { "raise(Puppet::ParseError, \"mysql_password(): Wrong number of arguments \" \\\n \"given (\#{args.size} for 1)\")" }
 
       it 'has the correct error message' do
-        expect(cop.offenses[0]).not_to be_nil
-        expect(cop.offenses[0].message).to match(/message should not be a multi-line string/)
-        expect(cop.offenses[0].message).to match(/message should use correctly formatted interpolation/)
+        expect(@offenses[0]).not_to be_nil
+        expect(@offenses[0].message).to match(/message should not be a multi-line string/)
+        expect(@offenses[0].message).to match(/message should use correctly formatted interpolation/)
       end
 
       it 'has the correct number of offenses' do
-        expect(cop.offenses.size).to eq(1)
+        expect(@offenses.size).to eq(1)
       end
 
       it 'autocorrects', broken: true do

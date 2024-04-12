@@ -4,7 +4,7 @@ module RuboCop
   module Cop
     module I18n
       module RailsI18n
-        # This cop is looks for strings that appear to be sentences but are not decorated.
+        # Looks for strings that appear to be sentences but are not decorated.
         # Sentences are determined by the SENTENCE_REGEXP. (Upper case character, at least one space,
         # and sentence punctuation at the end)
         #
@@ -70,7 +70,7 @@ module RuboCop
         #   "Any other string is fine now"
         #   t("only_this_text")
         #
-        class DecorateString < Cop
+        class DecorateString < Base
           SENTENCE_REGEXP = /^\s*[[:upper:]][[:alpha:]]*[[:blank:]]+.*[.!?]$/.freeze
           FRAGMENTED_SENTENCE_REGEXP = /^\s*([[:upper:]][[:alpha:]]*[[:blank:]]+.*)|([[:alpha:]]*[[:blank:]]+.*[.!?])$/.freeze
           FRAGMENT_REGEXP = /^\s*[[:alpha:]]*[[:blank:]]+.*$/.freeze
