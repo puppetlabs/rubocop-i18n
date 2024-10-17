@@ -19,7 +19,7 @@ module RuboCop
         #   # good
         #
         #   _("Result is good.")
-        class DecorateString < Cop
+        class DecorateString < Base
           STRING_REGEXP = /^\s*[[:upper:]][[:alpha:]]*[[:blank:]]+.*[.!?]$/.freeze
 
           def on_dstr(node)

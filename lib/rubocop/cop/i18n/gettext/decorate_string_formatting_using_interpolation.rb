@@ -22,7 +22,7 @@ module RuboCop
         #
         #   _("result is %{detail}" % {detail: message})
         #
-        class DecorateStringFormattingUsingInterpolation < Cop
+        class DecorateStringFormattingUsingInterpolation < Base
           def on_send(node)
             decorator_name = node.loc.selector.source
             return unless GetText.supported_decorator?(decorator_name)

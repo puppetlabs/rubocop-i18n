@@ -4,7 +4,7 @@ module RuboCop
   module Cop
     module I18n
       module GetText
-        class DecorateFunctionMessage < Cop
+        class DecorateFunctionMessage < Base
           def on_send(node)
             method_name = node.loc.selector.source
             return unless GetText.supported_method?(method_name)
