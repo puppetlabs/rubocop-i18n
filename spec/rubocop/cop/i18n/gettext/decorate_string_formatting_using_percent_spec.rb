@@ -2,9 +2,9 @@
 
 require 'spec_helper'
 
-describe RuboCop::Cop::I18n::GetText::DecorateStringFormattingUsingPercent, :config, :config do
+describe RuboCop::Cop::I18n::GetText::DecorateStringFormattingUsingPercent, :config do
   before(:each) do
-    investigate(cop, source)
+    @offenses = investigate(cop, source)
   end
 
   RuboCop::Cop::I18n::GetText.supported_decorators.each do |decorator|

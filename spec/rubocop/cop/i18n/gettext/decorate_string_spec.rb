@@ -2,9 +2,9 @@
 
 require 'spec_helper'
 
-describe RuboCop::Cop::I18n::GetText::DecorateString, :config, :config do
+describe RuboCop::Cop::I18n::GetText::DecorateString, :config do
   before(:each) do
-    investigate(cop, source)
+    @offenses = investigate(cop, source)
   end
 
   context 'decoration needed for string' do
