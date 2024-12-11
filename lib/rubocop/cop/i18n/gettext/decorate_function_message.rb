@@ -137,16 +137,16 @@ module RuboCop
                 if interpolated_values_string.empty?
                   interpolated_values_string << '{ '
                 end
-                interpolated_values_string << "#{hash_key}: #{value.loc.expression.source}, "
+                interpolated_values_string << "#{hash_key}: #{value.source}, "
 
                 # Replace interpolation with format string
-                corrector.replace(child.loc.expression, "%{#{hash_key}}")
+                corrector.replace(child, "%{#{hash_key}}")
               end
               unless interpolated_values_string.empty?
                 interpolated_values_string << '}'
               end
-              corrector.insert_before(node.source_range, '_(')
-              corrector.insert_after(node.source_range, ") % #{interpolated_values_string}")
+              corrector.insert_before(node, '_(')
+              corrector.insert_after(node, ") % #{interpolated_values_string}")
             }
           end
         end
